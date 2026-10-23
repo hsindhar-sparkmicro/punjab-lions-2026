@@ -136,9 +136,51 @@ const rest=D.season.filter(p=>!KEY.includes(p.name)&&p.mat>0).sort((a,b)=>b.mat-
 const tiles=$('#tiles');
 rest.forEach((p,i)=>{const c=el('button','ptile pop');c.type='button';c.dataset.open='player:'+p.name;c.setAttribute('aria-haspopup','dialog');c.style.transitionDelay=(i%6*60)+'ms';
   c.innerHTML=`<div class="tface">${photo(p.name)}</div><b>${esc(disp(p.name))}</b><span>${esc((D.players[p.name]||{}).role||'')}</span>`;tiles.appendChild(c)});
-/* hero faces */
-const faces=$('#faces');[...KEY,...rest.map(p=>p.name)].filter(n=>P.players[n]).slice(0,14).forEach(n=>{const b=el('button','hface');b.type='button';b.dataset.open='player:'+n;b.title=disp(n);b.setAttribute('aria-label',disp(n)+': open stats');b.innerHTML=`<img src="${P.players[n]}" alt="">`;faces.appendChild(b)});
-{const a=el('a','hface more-f','<span>Meet the<br>squad</span>');a.href='#squad';faces.appendChild(a)}
+/* hero squad orbit: every player gets a card that circles the crest (desktop), a looping row passing under it (phones),
+   a static ring / scrollable row with prefers-reduced-motion or ?static=1. Clicking a card opens the existing player modal. */
+(function(){
+ const stage=$('#orbit'),track=$('#orbitTrack');if(!stage||!track)return;
+ const PH=new Set(['Mohamad Vahora','Lakhwinder Singh','Jashan Lubana','Abu Taher Arafat','Sarvpreet Guru']); // poor / missing CricClubs photos
+ const names=[...KEY,...rest.map(p=>p.name)].filter((n,i,a)=>a.indexOf(n)===i);
+ const cname=n=>{const w=disp(n).split(' ');return w.length>2?w[0]+' '+w.slice(1,-1).map(x=>x[0]+'.').join(' ')+' '+w[w.length-1]:w.join(' ')};
+ const face=n=>(!PH.has(n)&&P.players[n])?`<img src="${P.players[n]}" alt="${esc(disp(n))}, CricClubs profile photo" decoding="async">`:
+   `<span class="ph-face oc-ph" role="img" aria-label="Punjab Lions crest placeholder for ${esc(disp(n))}"><img src="img/crest-128.png" alt=""><b>${ini(n)}</b></span>`;
+ const mk=(n,dup)=>{const role=(D.players[n]||{}).role||'';const c=el('button','ocard');c.type='button';c.dataset.open='player:'+n;c.setAttribute('aria-haspopup','dialog');
+   c.setAttribute('aria-label',disp(n)+(role?', '+role:'')+': open 2026 stats');if(dup){c.tabIndex=-1;c.setAttribute('aria-hidden','true')}
+   c.innerHTML=`<span class="oc-in"><span class="oc-face">${face(n)}</span><b class="oc-name">${esc(cname(n))}</b>${role?`<span class="oc-role">${esc(role)}</span>`:''}</span>`;return c};
+ const still=STATIC||RM, wide=matchMedia('(min-width:1200px)');
+ let cards=[],mode='',raf=0,ang=0,clk=0,spd=0,hold=false,vis=true,last=0,geo=null,zs=[];
+ function build(){cancelAnimationFrame(raf);raf=0;track.innerHTML='';mode=wide.matches?'ring':'row';stage.className='orbit '+mode+(still?' still':'');
+   if(mode==='ring'){cards=names.map(n=>mk(n));cards.forEach(c=>track.appendChild(c));zs=cards.map(()=>-1);measure();frame(clk);if(!still)loop()}
+   else{cards=[];const row=el('div','oc-row');names.forEach(n=>row.appendChild(mk(n)));if(!still)names.forEach(n=>row.appendChild(mk(n,true)));track.appendChild(row)}}
+ function measure(){const W=stage.clientWidth,H=stage.clientHeight,sr=stage.getBoundingClientRect();
+   // never let the ring reach the headline column: find the right-most edge of the hero copy's text and buttons
+   let edge=0;const w=document.createTreeWalker($('.hero-copy'),NodeFilter.SHOW_TEXT),rg=document.createRange();let tn;
+   while(tn=w.nextNode()){rg.selectNodeContents(tn);for(const r of rg.getClientRects())edge=Math.max(edge,r.right)}
+   document.querySelectorAll('.hero-copy .btn').forEach(b=>edge=Math.max(edge,b.getBoundingClientRect().right));
+   const rx=Math.max(150,Math.min(290,W*.65,sr.left+W/2-edge-52));geo={cx:W/2,cy:H*.6,rx,ry:rx*.36}}
+ function frame(t){const g=geo,N=cards.length;for(let i=0;i<N;i++){const a=ang+i*2*Math.PI/N,s=Math.sin(a),d=(s+1)/2; // d: 0 = back (behind crest), 1 = front
+     const bob=still?0:Math.sin(t/900+i*1.7)*5,x=g.cx+Math.cos(a)*g.rx,y=g.cy+s*g.ry+bob,sc=.52+.48*d;
+     const c=cards[i];c.style.transform=`translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) translate(-50%,-50%) perspective(700px) rotateY(${(Math.cos(a)*-48).toFixed(1)}deg) scale(${sc.toFixed(3)})`;c.style.opacity=(s<0?.22+.6*d:.5+.5*d).toFixed(2);
+     const z=s<-.05?1+Math.round(d*8):12+Math.round(d*20);if(z!==zs[i]){zs[i]=z;c.style.zIndex=z}}}
+ function loop(){last=performance.now();const step=t=>{const dt=Math.min(50,t-last);last=t;const target=hold?0:1;spd+=(target-spd)*(hold?1:Math.min(1,dt/600));
+     ang+=spd*dt*2*Math.PI/90000;clk+=spd*dt; // one lap every ~90 s; the bob clock stops with the ring
+     frame(clk);raf=vis?requestAnimationFrame(step):0};raf=requestAnimationFrame(step)}
+ const wake=()=>{if(mode==='ring'&&!still&&!raf&&vis&&!document.hidden)loop()};
+ track.addEventListener('pointerover',e=>{if(e.target.closest('.ocard'))hold=true});
+ track.addEventListener('pointerout',e=>{if(!e.relatedTarget||!e.relatedTarget.closest||!e.relatedTarget.closest('.ocard'))hold=track.contains(document.activeElement)&&document.activeElement.matches(':focus-visible')});
+ track.addEventListener('focusin',e=>{if(e.target.matches(':focus-visible')){hold=true;stage.classList.add('hold')}}); // a focused card never slides away from the keyboard user
+ track.addEventListener('focusout',()=>{hold=false;stage.classList.remove('hold')});
+ // phones: pause the row while a finger is on it, resume shortly after
+ let tt=0;track.addEventListener('touchstart',()=>{clearTimeout(tt);stage.classList.add('hold')},{passive:true});
+ track.addEventListener('touchend',()=>{clearTimeout(tt);tt=setTimeout(()=>{if(!track.contains(document.activeElement))stage.classList.remove('hold')},2500)},{passive:true});
+ new IntersectionObserver(es=>{vis=es[0].isIntersecting;stage.classList.toggle('off',!vis);if(vis)wake();else{cancelAnimationFrame(raf);raf=0}}).observe(stage);
+ document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(raf);raf=0}else wake()});
+ if(window.ResizeObserver)new ResizeObserver(()=>{if(mode==='ring'){measure();frame(clk)}}).observe(stage);
+ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(mode==='ring'){measure();frame(clk)}});
+ (wide.addEventListener?wide.addEventListener('change',build):wide.addListener(build));
+ build();
+})();
 /* highlight reel: poster cards; video attached lazily (IntersectionObserver, preload=none); hover or click/tap plays */
 {const R=$('#reelGrid');
  VIDS.forEach((v,i)=>{const c=el('article','vcard pop'+(v.id==='clip3'?' wide':''));c.style.transitionDelay=(i*90)+'ms';c.dataset.clip=v.id;
