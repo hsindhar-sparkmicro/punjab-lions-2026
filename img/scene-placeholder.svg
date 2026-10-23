@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" fill="none" stroke="#FFC72C" stroke-linecap="round">
+  <!-- Placeholder cricket scene (line art, not a photo): pitch, creases, stumps, ball seam, boundary arc -->
+  <path d="M-100 860 Q800 520 1700 860" stroke-width="2" opacity=".5" stroke-dasharray="6 14"/>
+  <path d="M-100 900 Q800 600 1700 900" stroke-width="1.2" opacity=".35"/>
+  <g transform="translate(800 520) skewX(-8)" opacity=".55">
+    <path d="M-70 -260 L70 -260 L120 330 L-120 330 Z" stroke-width="2"/>
+    <path d="M-110 230 L110 230 M-95 120 L95 120" stroke-width="1.6"/>
+    <path d="M-62 -210 L62 -210 M-66 -170 L66 -170" stroke-width="1.4"/>
+    <path d="M-14 -250 v-46 M0 -250 v-46 M14 -250 v-46 M-18 -296 h36" stroke-width="2.4"/>
+    <path d="M-22 300 v-70 M0 300 v-70 M22 300 v-70 M-26 230 h52" stroke-width="3"/>
+  </g>
+  <g transform="translate(1320 220)" opacity=".45"><circle r="60" stroke-width="2"/><path d="M-42 -42 Q0 0 -42 42 M42 -42 Q0 0 42 42" stroke-width="1.6" stroke-dasharray="3 6"/></g>
+  <g transform="translate(240 260) rotate(-28)" opacity=".4"><path d="M0 -150 v80 M-26 -70 h52 l-6 230 q-20 22 -40 0 z" stroke-width="2"/></g>
+</svg>

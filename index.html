@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Punjab Lions CC · 2026 Season</title>
+<meta name="description" content="Punjab Lions Cricket Club's 2026 season in Cricket Quebec: the squad, highlight reel, Lions Moments, Lions on the world stage, and every team's numbers.">
+<meta name="theme-color" content="#050505">
+<link rel="icon" type="image/png" sizes="128x128" href="img/crest-128.png">
+<link rel="apple-touch-icon" href="img/crest-512.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Punjab Lions CC · 2026 Season">
+<meta property="og:description" content="Four teams, one squad, one final. Meet the Lions and relive the moments that made our 2026 season.">
+<meta property="og:image" content="https://hsindhar-sparkmicro.github.io/punjab-lions-2026/img/crest-640.jpg">
+<meta property="og:url" content="https://hsindhar-sparkmicro.github.io/punjab-lions-2026/">
+<meta name="twitter:card" content="summary">
+<script>if(/[?&]static=1/.test(location.search))document.documentElement.classList.add('static');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="progress"></div>
+<header class="nav">
+  <a class="brand" href="#top"><img class="crest" src="img/crest-128.png" width="48" height="48" alt="Punjab Lions crest"><span>Punjab Lions <em>CC</em></span></a>
+  <nav>
+    <a href="#squad">The Lions</a><a href="#reel">Reel</a><a href="#moments">Moments</a><a href="#world">World stage</a><a href="#comps">Our teams</a><a href="#batting">Batting</a><a href="#bowling">Bowling</a><a href="#formats">T20 vs Long</a><a href="#knockouts">Grow next</a><a href="#recs">Next season</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section id="top" class="hero">
+  <div class="scene vid" id="heroScene" data-clip="clip3" aria-hidden="true"></div>
+  <canvas id="particles" aria-hidden="true"></canvas>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="wrap hero-inner">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="kicker reveal"><span class="kline"></span>Punjab Lions · Cricket Quebec · 2026</p>
+        <h1 class="reveal">Season 2026<br><span class="grad">The Pride.</span></h1>
+        <p class="tagline reveal">Pride. Passion. Punjab. <span class="grad">We roar together.</span></p>
+        <p class="lede reveal">Four teams, one squad, one final. Meet the Lions and relive the moments that made our season.</p>
+        <div class="ctas reveal"><a class="btn gold" href="#squad">Meet the Lions</a><a class="btn ghost" href="#moments">Lions Moments</a></div>
+      </div>
+      <div class="hero-crest reveal"><img src="img/crest-512.png" width="512" height="512" alt="Punjab Lions crest: lion shield with the motto Shera Di Kaum Punjabi"><p class="motto">Shera Di Kaum Punjabi</p></div>
+    </div>
+    <div class="faces reveal" id="faces" aria-label="The squad"></div>
+    <div class="strip reveal">
+      <span><b>19</b> wins</span><span><b>3,745</b> runs</span><span><b>221</b> wickets</span><span><b>DivX T20</b> runners-up</span>
+      <button class="more" type="button" data-open="season" aria-haspopup="dialog">Season in numbers <i>+</i></button>
+    </div>
+    <p class="credit" id="heroCredit"></p>
+  </div>
+</section>
+
+<!-- SQUAD -->
+<section id="squad" class="sec dark scened">
+  <div class="scene photo dim" id="squadScene" aria-hidden="true"></div>
+  <div class="wrap">
+    <h2 class="reveal"><small>01</small>Meet the Lions</h2>
+    <p class="sub reveal">The players who carried the black and gold in 2026. Tap a player for their batting, bowling and fielding in each competition.</p>
+    <div class="pgrid" id="cards"></div>
+    <div class="mgroup reveal">The rest of the pride</div>
+    <div class="ptiles" id="tiles"></div>
+    <p class="fine center" id="photoNote"></p>
+  </div>
+</section>
+
+<!-- HIGHLIGHT REEL -->
+<section id="reel" class="sec black chev-top scened">
+  <div class="scene ph" aria-hidden="true"></div>
+  <div class="wrap">
+    <h2 class="reveal"><small>02</small>Highlight reel</h2>
+    <p class="sub reveal">Short clips from our 2026 season. Hover or tap a card to play (no sound).</p>
+    <div class="reel" id="reelGrid"></div>
+  </div>
+</section>
+
+<!-- MOMENTS -->
+<section id="moments" class="sec hl scened">
+  <div class="scene vid" id="momScene" data-clip="clip2" aria-hidden="true"></div>
+  <canvas id="burst" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <h2 class="reveal"><small>03</small>Season highlights<span class="grad">Lions Moments</span></h2>
+    <p class="sub reveal">Our ten best moments of 2026, from the CricClubs scorecards and ball-by-ball. Tap a moment for the story and the scorecard.</p>
+    <div id="mFeature"></div>
+    <div class="moments top" id="mTop"></div>
+    <div class="mgroup reveal">Honourable mentions</div><div class="moments hm" id="mHM"></div>
+    <p class="fine center" id="mSrc"></p>
+  </div>
+</section>
+
+<!-- WORLD STAGE -->
+<section id="world" class="sec world scened">
+  <div class="scene ph alt" aria-hidden="true"></div>
+  <div class="wrap">
+    <h2 class="reveal"><small>04</small>Lions on the world stage</h2>
+    <p class="sub reveal">Beyond the club: Lions picked to represent Québec and Canada in 2026.</p>
+    <div id="worldGrid"></div>
+  </div>
+</section>
+
+<!-- TEAMS -->
+<section id="comps" class="sec coal chev-top scened">
+  <div class="scene ph alt" aria-hidden="true"></div>
+  <div class="wrap">
+    <h2 class="reveal"><small>05</small>Our four teams</h2>
+    <p class="sub reveal">Two Premier Division sides and two DivX (CricClubs: &ldquo;Axe Division&rdquo;) sides. Tap a team for results, points and net run rate.</p>
+    <div class="comp-grid" id="compGrid"></div>
+  </div>
+</section>
+
+<!-- BATTING -->
+<section id="batting" class="sec black chev-top">
+  <div class="wrap">
+    <h2 class="reveal"><small>06</small>Top batters</h2>
+    <p class="sub reveal">Two players carried the season: <b class="gold">Abhinav</b> and <b class="gold">Harsimranjit</b> scored <b>36%</b> of all Punjab Lions runs (1,332 of 3,745).</p>
+    <div class="seg reveal" id="batSeg"></div>
+    <div class="chart-row">
+      <div class="panel reveal"><h3 id="batTitle">Runs · whole season</h3><div class="chart-box tall"><canvas id="batChart"></canvas></div></div>
+      <div class="panel reveal"><h3>Runs vs strike rate <span class="muted">(10+ innings or 150+ runs, season)</span></h3><div class="chart-box tall"><canvas id="srChart"></canvas></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- BOWLING -->
+<section id="bowling" class="sec dark chev-top">
+  <div class="wrap">
+    <h2 class="reveal"><small>07</small>Top bowlers</h2>
+    <p class="sub reveal"><b class="gold">Harsimranjit</b> took <b>49</b> wickets at economy <b>4.98</b>. The top two took <b>33%</b> of all wickets (72 of 221).</p>
+    <div class="seg reveal" id="bowlSeg"></div>
+    <div class="chart-row">
+      <div class="panel gold-edge reveal"><h3 id="bowlTitle">Wickets · whole season</h3><div class="chart-box tall"><canvas id="bowlChart"></canvas></div></div>
+      <div class="panel gold-edge reveal"><h3>Share of the load <span class="muted">(season)</span></h3>
+        <div class="donuts"><div><div class="chart-box sq"><canvas id="shareRuns"></canvas></div><p>Runs</p></div><div><div class="chart-box sq"><canvas id="shareWk"></canvas></div><p>Wickets</p></div></div>
+        <p class="note">Gold = Abhinav Singh + Harsimranjit Singh Sindhar. Bronze = rest of squad.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORMATS -->
+<section id="formats" class="sec coal chev-top">
+  <div class="wrap">
+    <h2 class="reveal"><small>08</small>T20 vs the long format</h2>
+    <p class="sub reveal">Team batting speeds up in T20 &mdash; but outside the top three run-scorers the Premier strike rate was only <b>82.5</b> in T20 and <b>68.4</b> in the 40-over.</p>
+    <div class="chart-row">
+      <div class="panel reveal"><h3>Team batting strike rate</h3><div class="chart-box"><canvas id="fmtSR"></canvas></div></div>
+      <div class="panel reveal"><h3>Team bowling economy</h3><div class="chart-box"><canvas id="fmtEcon"></canvas></div></div>
+    </div>
+    <div class="panel wide reveal"><h3>Player strike rate by format <span class="muted">(T20 = Premier T20 + DivX T20; Long = Premier 40 + DivX 30)</span></h3><div class="chart-box"><canvas id="fmtPlayers"></canvas></div></div>
+    <div class="fmt-cards" id="fmtCards"></div>
+  </div>
+</section>
+
+<!-- KNOCKOUTS -->
+<section id="knockouts" class="sec ember chev-top">
+  <div class="wrap">
+    <h2 class="reveal"><small>09</small>Where we grow next</h2>
+    <p class="sub reveal">The honest part. Our three knockout exits all came after being bowled out: <b data-count="335">0</b> runs for <b data-count="30">0</b> wickets. Fix this and 2027 looks very different.</p>
+    <div class="ko-grid" id="koGrid"></div>
+    <details class="panel wide reveal fowp" id="fowDetails"><summary><h3>How the wickets fell in the three knockout losses</h3><span class="more">Show the breakdown <i>+</i></span></summary>
+      <p class="note" id="fowPattern"></p>
+      <div class="fow-grid" id="fowGrid"></div>
+    </details>
+    <div class="chart-row">
+      <div class="panel reveal"><h3>Innings bowled out, by competition</h3><div class="chart-box"><canvas id="alloutChart"></canvas></div><p class="note">11 of 31 innings &mdash; a habit all season, not just in knockouts.</p></div>
+      <div class="panel reveal"><h3>What to work on</h3>
+        <ul class="lacks">
+          <li><b>10 ducks</b> in the DivX 30-over (bowled out for 75 and 76) and <b>10 ducks</b> in the Premier T20.</li>
+          <li><b>Wides:</b> 89 in 156.2 Premier T20 overs = <b>0.57 an over</b> (about 10 a game). Other competitions 0.47&ndash;0.49.</li>
+          <li><b>T20 bowling depth:</b> economy 6.74 (Premier T20) and 6.94 (DivX T20). After the top three, only 22 Premier T20 wickets from everyone else.</li>
+          <li><b>DivX 30-over run rate:</b> economy 5.97 vs 4.80 in the Premier 40 &rarr; NRR &minus;0.072.</li>
+          <li><b>Long-format results:</b> both Premier 40 league losses came defending (222/7, 146/9); every DivX 30 chase that failed fell short.</li>
+          <li><b>Stretched squad:</b> about 20 players across four teams; on 12 Sept both long-format sides played and both lost.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="panel wide reveal"><h3>Wides per over, by competition</h3><div class="chart-box short"><canvas id="widesChart"></canvas></div></div>
+  </div>
+</section>
+
+<!-- RECOMMENDATIONS -->
+<section id="recs" class="sec gold-bg">
+  <div class="wrap">
+    <img class="recs-lion" src="img/crest-512.png" alt="" aria-hidden="true">
+    <h2 class="reveal"><small>10</small>For 2027</h2>
+    <ol class="recs">
+      <li class="reveal"><h4>Knockout batting plan</h4><p>Five down by halfway means consolidate. Darshpreet and Harjeet anchor the long format, not the T20 top order (SR under 90). In T20, lead with Abhinav, Harsimranjit and Pankaj (SR 145&ndash;170).</p></li>
+      <li class="reveal"><h4>Pick by format</h4><p>T20: Pankaj as finisher, Abhinav and Sujaan as strike bowlers. Long: Vahora and Humayun as main seamers (econ 5.06 and 5.15) plus Harsimranjit&rsquo;s long spells. No T20 overs for bowlers going above 8.5.</p></li>
+      <li class="reveal"><h4>Cut the wides</h4><p>Under 6 a game in the Premier T20. Track Pankaj (20), Humayun (19), Pradeep and Jashan (11 each).</p></li>
+      <li class="reveal"><h4>Less reliance on the top two</h4><p>Develop a third batter averaging 25+ (Chiragdeep, Rowan and Lakhwinder showed signs in the DivX T20) and a fourth Premier T20 wicket-taker.</p></li>
+      <li class="reveal"><h4>Manage availability</h4><p>Lock the Premier core before September knockouts, avoid same-day double fixtures for key players, and plan around outside events (Sept 5&ndash;7, Oct 17&ndash;18).</p></li>
+    </ol>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap foot-grid">
+    <div class="foot-brand"><img src="img/crest-128.png" width="72" height="72" alt="Punjab Lions crest"><div><b>Punjab Lions CC</b><span>Play like a lion. &middot; Shera Di Kaum Punjabi</span><span>Instagram &amp; Facebook: /punjablions.cc</span></div></div>
+    <div>
+    <p><b>Sources:</b> CricClubs (Cricket Quebec, clubId 1834) team pages for teamIds 1966, 2273, 2172, 2295 and points tables for leagues 154, 177, 156, 179; per-player 2026 records. Compiled 23 Oct 2026.</p>
+    <p class="muted">Stats from CricClubs. Photos and videos courtesy of Punjab Lions / @punjablions.cc.</p>
+    </div>
+  </div>
+</footer>
+
+
+<div class="modal" id="modal" hidden>
+  <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="mdTitle" tabindex="-1">
+    <button class="mclose" type="button" aria-label="Close">&times;</button>
+    <div id="mdBody"></div>
+  </div>
+</div>
+<script src="vendor/chart.umd.min.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
