@@ -24,7 +24,7 @@ const P=D.photos||{players:{},beyond:{},flags:{}};
 const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 const ini=n=>n.replace(/^XX /,'').split(' ').filter((w,j,a)=>j===0||j===a.length-1).map(w=>w[0]).join('');
 const disp=n=>n.replace(/^XX /,'');
-const photo=(n,cls)=>P.players[n]?`<img class="${cls||''}" src="${P.players[n]}" alt="${esc(disp(n))}, CricClubs profile photo" loading="lazy">`:
+const photo=(n,cls)=>P.players[n]?`<img class="${cls||''}" src="${P.players[n]}" alt="${esc(disp(n))}, ${esc((P.credit||{})[n]||'CricClubs profile photo')}" loading="lazy">`:
   `<div class="ph-face ${cls||''}" role="img" aria-label="No photo yet for ${esc(disp(n))}"><img src="img/crest-128.png" alt=""><b>${ini(n)}</b><span>Punjab Lions</span></div>`;
 const modal=$('#modal'),mbox=modal.querySelector('.mbox'),mbody=$('#mdBody');let opener=null;const builders={};
 function openModal(id,from){const [k,...r]=id.split(':');const b=builders[k];if(!b)return;mbody.innerHTML=b(r.join(':'));mbox.className='mbox m-'+k;
@@ -142,7 +142,7 @@ const faces=$('#faces');[...KEY,...rest.map(p=>p.name)].filter(n=>P.players[n]).
 /* ---------- HERO: one floating FUT-style card (random player, new one every 7 s) ---------- */
 (function(){
  const host=$('.hero-inner'),crest=$('.hero-crest>img');if(!host||!crest)return;
- const PH=new Set(['Mohamad Vahora','Lakhwinder Singh','Jashan Lubana','Abu Taher Arafat','Sarvpreet Guru']); // poor / missing CricClubs photos -> crest + initials art
+ const PH=new Set(['Lakhwinder Singh','Jashan Lubana','Sarvpreet Guru']); // poor / missing photos -> crest + initials art
  const POS={'All Rounder':'AR','Batter':'BAT','Bowler':'BWL','Wicket Keeper':'WK'};
  const pool=D.season.filter(p=>p.mat>0).map(p=>p.name);
  const slug=n=>disp(n).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
@@ -181,16 +181,17 @@ const faces=$('#faces');[...KEY,...rest.map(p=>p.name)].filter(n=>P.players[n]).
  /* placement: off the crest's lower-right shoulder (desktop) / beside the crest (phones); layout offsets only, so
     the crest's float and the reveal transforms never move it */
  function place(){let x=0,y=0,e=crest;while(e&&e!==host){x+=e.offsetLeft;y+=e.offsetTop;e=e.offsetParent}
-   const cw=crest.offsetWidth,mob=innerWidth<760,hr=host.getBoundingClientRect(),maxR=hr.width+(innerWidth-hr.right)-10;let w,l,t;
+   const cw=crest.offsetWidth,mob=matchMedia("(max-width:760px)").matches,hr=host.getBoundingClientRect(),maxR=hr.width+(innerWidth-hr.right)-10;let w,l,t;
+   let off=false;
    if(mob){l=x+cw*.9;w=cl(maxR-l,84,100);t=y+cw*.2;l=Math.min(l,maxR-w)}
    else{l=x+cw*.84;w=cl(maxR-l,120,190);t=y+cw*.66;
-     if(l+w>maxR){l=maxR-w;t=y+cw*.8}} // narrow desktops/tablets: no room beside the shield, so tuck it lower, under the crest's tip
+     if(l+w>maxR)off=true} // tablets / narrow desktops: no room beside the shield without covering crest or motto -> no card
    {const fc=$('#faces'),lc=fc&&fc.lastElementChild;if(lc&&l<fc.offsetLeft+lc.offsetLeft+lc.offsetWidth&&fc.offsetParent===host)t=Math.min(t,fc.offsetTop-w*262/184-6)} // never sit on the face circles
-   btn.classList.toggle('compact',mob);btn.style.cssText=`left:${l.toFixed(1)}px;top:${t.toFixed(1)}px;width:${w.toFixed(1)}px;font-size:${(w/184*16).toFixed(2)}px`}
+   hidden=off;btn.hidden=off;btn.classList.toggle('compact',mob);btn.style.cssText=`left:${l.toFixed(1)}px;top:${t.toFixed(1)}px;width:${w.toFixed(1)}px;font-size:${(w/184*16).toFixed(2)}px`}
  const q=new URLSearchParams(location.search).get('fut'),want=q&&pool.find(n=>slug(n)===slug(q)||n===q);
  /* own random source, so the rest of the page's Math.random sequence is untouched */
  const rndI=n=>{try{return crypto.getRandomValues(new Uint32Array(1))[0]%n}catch(e){return Math.floor(Math.random()*n)}};
- let cur=want||pool[rndI(pool.length)],hist=[cur],el7=0,hover=false,focus=false,vis=true,busy=false;
+ let hidden=false,cur=want||pool[rndI(pool.length)],hist=[cur],el7=0,hover=false,focus=false,vis=true,busy=false;
  const pick=()=>{let n;do{n=pool[rndI(pool.length)]}while(n===cur&&pool.length>1);return n};
  const still=STATIC||RM;
  async function swap(){if(busy)return;busy=true;const n=pick();
@@ -207,9 +208,9 @@ const faces=$('#faces');[...KEY,...rest.map(p=>p.name)].filter(n=>P.players[n]).
  new IntersectionObserver(es=>{vis=es[0].isIntersecting}).observe($('#top'));
  const modalEl=$('#modal');let lastT=performance.now();
  setInterval(()=>{const t=performance.now(),dt=t-lastT;lastT=t;
-   const paused=hover||focus||!vis||document.hidden||!modalEl.hidden;btn.classList.toggle('paused',paused);
-   if(paused||busy)return;el7+=dt;if(el7>=7000){el7=0;swap()}},100);
- window.__fut={get name(){return cur},get history(){return hist.slice()},get elapsed(){return el7},rating:n=>rating(S(n)),attrs:n=>attrs(S(n)),pool};
+   const paused=hidden||hover||focus||!vis||document.hidden||!modalEl.hidden;btn.classList.toggle('paused',paused);
+   if(paused)return;el7+=dt;if(el7>=7000&&!busy){el7-=7000;swap()}},100);
+ window.__fut={get hidden(){return hidden},get name(){return cur},get history(){return hist.slice()},get elapsed(){return el7},rating:n=>rating(S(n)),attrs:n=>attrs(S(n)),pool};
 })();
 /* highlight reel: poster cards; video attached lazily (IntersectionObserver, preload=none); hover or click/tap plays */
 {const R=$('#reelGrid');
@@ -224,7 +225,10 @@ const faces=$('#faces');[...KEY,...rest.map(p=>p.name)].filter(n=>P.players[n]).
    const hov=matchMedia('(hover: hover)').matches;
    if(hov){c.addEventListener('mouseenter',()=>play(c));c.addEventListener('mouseleave',()=>stop(c))}
    c.querySelector('.vplay').addEventListener('click',()=>{if(c.classList.contains('playing')&&(!hov||c._clicked)){c._clicked=false;stop(c)}else{c._clicked=true;play(c)}})});
-  new IntersectionObserver(es=>es.forEach(en=>{if(!en.isIntersecting)R.querySelectorAll('.vcard.playing').forEach(stop)})).observe(R)}}
+  new IntersectionObserver(es=>es.forEach(en=>{if(!en.isIntersecting)R.querySelectorAll('.vcard.playing').forEach(stop)})).observe(R)}
+ /* 'Watch' buttons in a player's stats (data-play=clipN): the modal closes on #reel, then scroll to that clip and play it */
+ document.addEventListener('click',e=>{const b=e.target.closest('[data-play]');if(!b)return;e.preventDefault();const c=R.querySelector(`.vcard[data-clip="${b.dataset.play}"]`);if(!c)return;
+  closeModal();c.scrollIntoView({behavior:RM?'auto':'smooth',block:'center'});c._clicked=true;play(c);c.querySelector('.vplay').focus({preventScroll:true})})}
 /* lions on the world stage (+ the mentor's rest day) */
 {const W=$('#worldGrid'),ca=WORLD.find(w=>w.key==='canada'),qc=WORLD.filter(w=>w.key!=='canada'),F=P.fun;
  W.innerHTML=`${ca?`<article class="wfeature pop" id="canada"><div class="wimg"><img src="${ca.img}" alt="Selected for Team Canada: Harsimran Sindhar, Québec's Pride, IMC Over-40s World Cup 2026, Guyana, Oct 17–31" loading="lazy"></div>
@@ -246,7 +250,7 @@ builders.player=n=>{const pc=(D.pcomp||{})[n]||{},m=D.players[n]||{},ks=D.comps.
   const fld=T('Fielding',[['Catches',f=>v(f.Catches)],['WK catches',f=>v(f['WK Catches'])],['Run outs (direct)',f=>v(f['Direct RO'])],['Run outs (indirect)',f=>v(f['Indirect RO'])],['Stumpings',f=>v(f.Stumpings)],['Total',f=>v(f.Total)]],'field');
   const by=worldOf(n).map(w=>({url:w.url||'#canada',img:w.img,caption:w.title+(w.sub?' - '+w.sub:''),meta:w.date?fmtDate(w.date)+' · Instagram ↗':'Lions on the world stage ↓',ext:!!w.url}));
   return `<div class="mdplayer"><div class="mdface">${photo(n)}</div><div><span class="fmt">${esc(roleOf(n))}</span><h3 id="mdTitle" class="mdh">${esc(disp(n))}</h3><p class="one">${headline(n)} <span class="muted">· whole season</span></p>
-   ${m.url?`<a class="btn ghost sm" href="${m.url}" target="_blank" rel="noopener">CricClubs profile ↗</a>`:''}
+   ${m.url?`<a class="btn ghost sm" href="${m.url}" target="_blank" rel="noopener">CricClubs profile ↗</a>`:''}${VIDS.filter(v=>v.who===n).map(v=>`<a class="btn gold sm watch" href="#reel" data-play="${v.id}">${esc(v.label||'Watch the clip')} ▶</a>`).join('')}
    ${by.length?`<div class="mdbeyond">${by.map(x=>`<a href="${x.url}"${x.ext?' target="_blank" rel="noopener"':''}><img src="${x.img}" alt="${esc(x.caption)}"><span>${esc(x.caption.split(' - ')[0])}<em>${x.meta}</em></span></a>`).join('')}</div>`:''}</div></div>
    ${bat}${bowl}${fld}${ks.length?'':'<p class="note">No 2026 records in the CricClubs tables.</p>'}<p class="fine">Source: CricClubs 2026 batting, bowling and fielding tables per competition.</p>`};
 

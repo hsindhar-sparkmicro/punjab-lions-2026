@@ -720,14 +720,6 @@ window.PL_DATA={
      "hs": 3
     },
     {
-     "name": "Abu Taher Arafat",
-     "ins": 0,
-     "runs": 0,
-     "avg": "--",
-     "sr": 0.0,
-     "hs": 0
-    },
-    {
      "name": "Jashan Lubana",
      "ins": 0,
      "runs": 0,
@@ -2788,54 +2780,6 @@ window.PL_DATA={
    },
    "avg": 1.0,
    "sr": 28.6,
-   "econ": null,
-   "bavg": null
-  },
-  {
-   "name": "Abu Taher Arafat",
-   "mat": 1,
-   "ins": 0,
-   "no": 0,
-   "runs": 0,
-   "balls": 0,
-   "hs": 0,
-   "sixes": 0,
-   "fours": 0,
-   "wk": 0,
-   "rc": 0,
-   "bb": 0,
-   "wides": 0,
-   "dis": 0,
-   "byFmt": {
-    "T20": {
-     "runs": 0,
-     "balls": 0,
-     "ins": 0,
-     "no": 0,
-     "wk": 0,
-     "rc": 0,
-     "bb": 0,
-     "avg": null,
-     "sr": null,
-     "econ": null,
-     "bavg": null
-    },
-    "LONG": {
-     "runs": 0,
-     "balls": 0,
-     "ins": 0,
-     "no": 0,
-     "wk": 0,
-     "rc": 0,
-     "bb": 0,
-     "avg": null,
-     "sr": null,
-     "econ": null,
-     "bavg": null
-    }
-   },
-   "avg": null,
-   "sr": null,
    "econ": null,
    "bavg": null
   }
@@ -5832,26 +5776,6 @@ window.PL_DATA={
      "4s": "0"
     }
    }
-  },
-  "Abu Taher Arafat": {
-   "premier": {
-    "bat": {
-     "Mat": "1",
-     "Ins": "0",
-     "No": "0",
-     "Runs": "0",
-     "Balls": "0",
-     "Avg": "--",
-     "Sr": "0.00",
-     "Hs": "0",
-     "50s": "0",
-     "75s": "0",
-     "100s": "0",
-     "Ducks(0)": "0",
-     "6s": "0",
-     "4s": "0"
-    }
-   }
   }
  },
  "totals": {
@@ -5866,7 +5790,7 @@ window.PL_DATA={
   "sixes": 134,
   "fours": 227,
   "allOut": 11,
-  "players": 24
+  "players": 23
  },
  "moments": {
   "source": "CricClubs QCF scorecards + ball-by-ball (clubId 1834)",
@@ -6409,7 +6333,8 @@ window.PL_DATA={
    "Raghav Tara": "img/photos/player-raghav-tara.jpg",
    "Rowan Singh Sandhu": "img/photos/player-rowan-singh-sandhu.jpg",
    "Sujaan Singh": "img/photos/player-sujaan-singh.jpg",
-   "Varun Rudra": "img/photos/player-varun-rudra.jpg"
+   "Varun Rudra": "img/photos/player-varun-rudra.jpg",
+   "Mohamad Vahora": "img/photos/player-mohamad-vahora.jpg"
   },
   "moments": {},
   "comps": {},
@@ -6446,7 +6371,6 @@ window.PL_DATA={
    "Jashan Lubana": "placeholder: shirtless mirror selfie with a MONTREAL text overlay; swap recommended",
    "Kiran Kaushik": "real (note: mirror selfie)",
    "Lakhwinder Singh": "placeholder: not a person (car keychain photo)",
-   "Mohamad Vahora": "placeholder: no person in frame (room / mirror shot)",
    "Raghav Tara": "real (note: two players in frame; confirm which is Raghav)"
   },
   "log": [
@@ -6465,13 +6389,14 @@ window.PL_DATA={
    "SKIPPED players/Lakhwinder Singh Singh.jpg: not a person (car keychain photo)",
    "player Manav Bathla <- players/Manav Bathla.jpg",
    "player Manpreet Singh <- players/Manpreet Singh.jpg",
-   "SKIPPED players/Mohamad Vahora.jpg: no person in frame (room / mirror shot)",
+   "SKIPPED players/Mohamad Vahora.jpg: newer photo mohamad-vahora-2026.jpg preferred",
    "player Pankaj Sharma <- players/Pankaj Sharma.jpg",
    "player Pradeep Singh <- players/Pradeep Singh.jpg",
    "player Raghav Tara <- players/Raghav Tara.jpg",
    "player Rowan Singh Sandhu <- players/Rowan Singh Sandhu.jpg",
    "player Sujaan Singh <- players/Sujaan Singh.jpg",
    "player Varun Rudra <- players/Varun Rudra.jpg",
+   "player Mohamad Vahora <- players/mohamad-vahora-2026.jpg",
    "not used as a photo (standings graphic): 2026-07-08_premier-standings-graphic.jpg",
    "not used as a photo (standings graphic): 2026-06-30_premier-standings-graphic.jpg",
    "beyond-the-club ['Abhinav Singh', 'Humayun Afzal'] <- instagram/2026-08-06_abhinav-humayun-team-quebec-selection.jpg",
@@ -6486,7 +6411,7 @@ window.PL_DATA={
   },
   "counts": {
    "manifest_posts": 3,
-   "players": 19,
+   "players": 20,
    "moments": 0,
    "comps": 0,
    "hero": true,
@@ -6576,7 +6501,20 @@ window.PL_DATA={
     "mp4": "video/clip5.mp4",
     "webm": "video/clip5.webm",
     "poster": "video/clip5-poster.jpg"
+   },
+   {
+    "id": "clip6",
+    "title": "Harsimran vs LaSalle: walking off after his innings",
+    "desc": "Padded up, bat and helmet in hand, Harsimran walks off the field and back to the tent with a smile.",
+    "mp4": "video/clip6.mp4",
+    "webm": "video/clip6.webm",
+    "poster": "video/clip6-poster.jpg",
+    "who": "Harsimranjit Singh Sindhar",
+    "label": "Watch: vs LaSalle"
    }
-  ]
+  ],
+  "credit": {
+   "Mohamad Vahora": "club photo, 2026 jersey"
+  }
  }
 };
