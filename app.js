@@ -149,17 +149,32 @@ const FUT=(()=>{
  /* Rating (60-95), deterministic, from the player's real 2026 season totals in data.js only:
       bat   = 0.7*min(1, runs/700) + 0.3*min(1, SR/150)        (SR counts only with 20+ balls faced)
       bowl  = 0.75*min(1, wickets/40) + 0.25*clamp((8-econ)/4, 0, 1)   (econ counts only with 60+ balls bowled)
-      field = min(1, fielding dismissals/30)                    (catches + keeper catches + run outs + stumpings)
+      adj   = outfield catches + run-outs (direct + assist) + 0.5*(keeper catches + stumpings)   (CricClubs fielding tables;
+              keepers get more chances, so their catches count half)
+      field = 0.5*min(1, adj/20) + 0.3*min(1, (adj/matches)/0.8) + 0.2*min(1, keyDismissals/5)
+              keyDismissals = dismissals in the 5 knockouts + 6 close games (<=20 runs, <=3 wkts or a tie), from the scorecards
       games = min(1, matches/30)
-      impact = max(bat,bowl) + 0.35*min(bat,bowl) + 0.15*field + 0.10*games
+      impact = max(bat,bowl) + 0.35*min(bat,bowl) + 0.30*field + 0.10*games
       rating = round(60 + 35*min(1, impact/1.4))                -> 60 (no contribution) ... 95 (squad-leading all-round season) */
- function rating(p){const bat=.7*Math.min(1,p.runs/700)+(p.balls>=20&&p.sr?.3*Math.min(1,p.sr/150):0);
+ const FK=D.fieldKey||{},BADGE=(D.recog||{}).badges||{};
+ function fsum(n){const o={ct:0,wk:0,dro:0,iro:0,st:0,tot:0},num=x=>+x||0;
+   for(const c of Object.values((D.pcomp||{})[n]||{})){const f=c.field;if(!f)continue;o.ct+=num(f.Catches);o.wk+=num(f['WK Catches']);o.dro+=num(f['Direct RO']);o.iro+=num(f['Indirect RO']);o.st+=num(f.Stumpings);o.tot+=num(f.Total)}
+   o.key=FK[n]||0;return o}
+ function parts(p){const bat=.7*Math.min(1,p.runs/700)+(p.balls>=20&&p.sr?.3*Math.min(1,p.sr/150):0);
    const bowl=.75*Math.min(1,p.wk/40)+(p.bb>=60&&p.econ!=null?.25*cl((8-p.econ)/4,0,1):0);
-   const imp=Math.max(bat,bowl)+.35*Math.min(bat,bowl)+.15*Math.min(1,p.dis/30)+.1*Math.min(1,p.mat/30);
+   const f=fsum(p.name),adj=f.ct+f.dro+f.iro+.5*(f.wk+f.st);
+   const field=.5*Math.min(1,adj/20)+.3*Math.min(1,p.mat?(adj/p.mat)/.8:0)+.2*Math.min(1,f.key/5);
+   return {bat,bowl,field,adj,f}}
+ function rating(p){const {bat,bowl,field}=parts(p);
+   const imp=Math.max(bat,bowl)+.35*Math.min(bat,bowl)+.3*field+.1*Math.min(1,p.mat/30);
    return Math.round(60+35*Math.min(1,imp/1.4))}
- /* 4-6 attributes, only numbers that exist for him; bowlers lead with bowling */
+ /* fielding is his top skill -> the card leads with fielding lines */
+ const fieldLed=p=>{const x=parts(p);return x.field>x.bat+1e-9&&x.field>x.bowl+1e-9};
+ /* 4-6 attributes, only numbers that exist for him; bowlers lead with bowling, fielders with fielding */
  function attrs(p){const bat=[['RUNS',p.runs]];if(p.balls>=20&&p.sr!=null)bat.push(['SR',f1(p.sr)]);if(p.ins>=3&&p.avg!=null)bat.push(['AVG',f1(p.avg)]);if(p.ins>0)bat.push(['HS',p.hs]);
    const bowl=[['WKTS',p.wk]];if(p.bb>=30&&p.econ!=null)bowl.push(['ECON',p.econ.toFixed(2)]);
+   if(fieldLed(p)){const {f,bat:b,bowl:w}=parts(p),ct=f.ct+f.wk;
+     return [['CT',ct],['RO',f.dro+f.iro],['CT/M',p.mat?(ct/p.mat).toFixed(2):'0.00'],['BIG',f.key],...(w>b&&p.wk>0?bowl:bat)].slice(0,6)}
    const lead=p.wk>=10&&p.wk*20>=p.runs,bowled=p.bb>0,L=lead?bowl:bat,O=lead?bat:bowled?bowl:[];
    const a=[...L.slice(0,3),...O.slice(0,2),['FLD',p.dis],...L.slice(3),...O.slice(2),['MAT',p.mat]];
    if(a.length<4&&!a.some(x=>x[0]==='WKTS'))a.splice(a.length-1,0,['WKTS',p.wk]); // never bowled: 0 wickets shown only to reach 4 lines
@@ -169,9 +184,9 @@ const FUT=(()=>{
  /* card face markup; full=true -> all 6 attribute lines (detail window) */
  const face=(n,full)=>{const p=S(n),r=rating(p),role=(D.players[n]||{}).role||'',pos=POS[role]||'';
    return `<span class="fut-top"><span class="fut-ovr">${r}</span>${pos?`<span class="fut-pos">${pos}</span>`:''}<img class="fut-club" src="img/crest-128.png" alt=""></span>
-     <span class="fut-art">${art(n)}</span><span class="fut-name${cname(n).length>18?' xl':cname(n).length>15?' l':''}">${esc(cname(n))}</span>
+     <span class="fut-art">${art(n)}</span>${BADGE[n]?`<span class="fut-badge">${esc(BADGE[n])}</span>`:''}<span class="fut-name${cname(n).length>18?' xl':cname(n).length>15?' l':''}">${esc(cname(n))}</span>
      <span class="fut-attrs">${attrs(p).map(([k,v])=>`<span><b>${v}</b><i>${k}</i></span>`).join('')}</span><span class="fut-shine"></span>`};
- return {PH,POS,pool,slug,cl,f1,rating,attrs,cname,art,face};
+ return {PH,POS,pool,slug,cl,f1,rating,attrs,cname,art,face,fsum,parts,fieldLed,BADGE};
 })();
 /* ---------- HERO: one floating FUT-style card (random player, new one every 7 s) ---------- */
 (function(){
@@ -223,7 +238,7 @@ const FUT=(()=>{
  setInterval(()=>{const t=performance.now(),dt=t-lastT;lastT=t;
    const paused=hidden||hover||focus||!vis||document.hidden||!modalEl.hidden;btn.classList.toggle('paused',paused);
    if(paused)return;el7+=dt;if(el7>=7000&&!busy){el7-=7000;swap()}},100);
- window.__fut={get hidden(){return hidden},get name(){return cur},get history(){return hist.slice()},get elapsed(){return el7},rating:n=>rating(S(n)),attrs:n=>attrs(S(n)),pool};
+ window.__fut={get hidden(){return hidden},get name(){return cur},get history(){return hist.slice()},get elapsed(){return el7},rating:n=>rating(S(n)),attrs:n=>attrs(S(n)),parts:n=>FUT.parts(S(n)),pool};
 })();
 /* highlight reel: poster cards; video attached lazily (IntersectionObserver, preload=none); hover or click/tap plays */
 {const R=$('#reelGrid');
@@ -272,18 +287,19 @@ builders.player=n=>{const pc=(D.pcomp||{})[n]||{},m=D.players[n]||{},ks=D.comps.
     panels+=panel('Batting',`<span class="fbig"><b>${p.runs}</b><i>runs</i></span>`,[tile('Mat',p.mat),tile('Inns',p.ins),tile('NO',p.no),tile('Runs',p.runs,1),tile('Balls',p.balls),tile('HS',p.ins?p.hs:null),tile('Avg',p.avg!=null?F(p.avg):null,1),tile('SR',p.sr!=null?F(p.sr):null,1),tile('50s',has('bat')?sum('bat','50s'):null),tile('4s',p.fours),tile('6s',p.sixes)]);
     if(p.bb>0)panels+=panel('Bowling',`<span class="fbig"><b>${p.wk}</b><i>wickets</i></span>`,[tile('Overs',ov(p.bb)),tile('Mdns',has('bowl')?sum('bowl','Mdns'):null),tile('Runs',p.rc),tile('Wkts',p.wk,1),tile('Econ',p.econ!=null?p.econ.toFixed(2):null,1),tile('Avg',p.wk&&p.bavg!=null?F(p.bavg):null,1),tile('SR',p.wk?F(p.bb/p.wk):null),tile('Wides',p.wides)]);
     else panels+=panel('Bowling','',['<p class="fnone">No bowling in the 2026 CricClubs tables.</p>']);
-    panels+=has('field')?panel('Fielding',`<span class="fbig"><b>${p.dis}</b><i>dismissals</i></span>`,[tile('Catches',sum('field','Catches'),1),tile('WK catches',sum('field','WK Catches')),tile('Run outs',sum('field','Direct RO')+sum('field','Indirect RO')),tile('Stumpings',sum('field','Stumpings')),tile('Total',sum('field','Total'),1)])
-      :panel('Fielding',`<span class="fbig"><b>${p.dis}</b><i>dismissals</i></span>`,[])}
+    {const f=FUT.fsum(n);
+     panels+=panel('Fielding',`<span class="fbig"><b>${p.dis}</b><i>dismissals</i></span>`,has('field')?[tile('Catches',f.ct,1),tile('WK catches',f.wk),tile('Stumpings',f.st),tile('Run outs',f.dro,1),tile('RO assists',f.iro),tile('Big-game',f.key,1)]:[])}}
+  const GG=(D.recog||{}).goldGlove,dlist=GG&&GG.player===n?`<h4 class="fsec">Every dismissal, by match</h4><div class="table-scroll"><table class="stbl futbl gglist"><thead><tr><th>Match</th><th>Game</th><th>Result</th><th>Dismissals</th><th>Context</th></tr></thead><tbody>${GG.rows.map(r=>`<tr${r.hot?' class="hot"':''}><td><a href="https://cricclubs.com/QCF/viewScorecard.do?matchId=${r.mid}&amp;clubId=1834" target="_blank" rel="noopener">${r.mid} ↗</a></td><td>${esc(r.game)}</td><td>${esc(r.result)}</td><td><b>${esc(r.dis)}</b></td><td>${esc(r.ctx)}</td></tr>`).join('')}</tbody></table></div>`:'';
   const r=p?FUT.rating(p):null,watch=VIDS.filter(x=>x.who===n);
   return `<div class="mdfut"><div class="mdfut-card">${p?`<span class="fut fut-detail" role="img" aria-label="${esc(disp(n))} player card: rating ${r}${m.role?', '+esc(m.role):''}"><span class="fut-tilt"><span class="fut-card">${FUT.face(n)}</span></span></span>`:`<div class="mdface">${photo(n)}</div>`}</div>
    <div class="mdfut-info"><span class="fmt">${esc(roleOf(n))}</span><h3 id="mdTitle" class="mdh">${esc(disp(n))}</h3>
-    ${p?`<div class="fratings"><span class="fr"><b>${r}</b><i>Lions rating</i></span>${m.role?`<span class="fr"><b>${FUT.POS[m.role]||'–'}</b><i>${esc(m.role)}</i></span>`:''}<span class="fr"><b>${p.mat}</b><i>matches</i></span></div>`:''}
+    ${p?`<div class="fratings"><span class="fr"><b>${r}</b><i>Lions rating</i></span>${m.role?`<span class="fr"><b>${FUT.POS[m.role]||'–'}</b><i>${esc(m.role)}</i></span>`:''}<span class="fr"><b>${p.mat}</b><i>matches</i></span>${FUT.BADGE[n]?`<span class="fbadge">${esc(FUT.BADGE[n])}</span>`:''}</div>`:''}
     <p class="one">${headline(n)} <span class="muted">· whole season</span></p>
     <div class="mdbtns">${m.url?`<a class="btn ghost sm" href="${m.url}" target="_blank" rel="noopener">CricClubs profile ↗</a>`:''}${watch.map(x=>`<a class="btn gold sm watch" href="#reel" data-play="${x.id}">${esc(x.label||'Watch the clip')} ▶</a>`).join('')}</div>
     ${by.length?`<div class="mdbeyond">${by.map(x=>`<a href="${x.url}"${x.ext?' target="_blank" rel="noopener"':''}><img src="${x.img}" alt="${esc(x.caption)}"><span>${esc(x.caption.split(' - ')[0])}<em>${x.meta}</em></span></a>`).join('')}</div>`:''}</div></div>
    ${p?`<h4 class="fsec">2026 season</h4><div class="fpanels">${panels}</div>`:''}
-   ${ks.length?`<h4 class="fsec">By competition</h4>${bat}${bowl}${fld}`:'<p class="note">No 2026 records in the CricClubs tables.</p>'}
-   <p class="fine">Source: CricClubs 2026 batting, bowling and fielding tables per competition. Lions rating: the same formula as the hero card (season runs, strike rate, wickets, economy, dismissals, matches).</p>`};
+   ${dlist}${ks.length?`<h4 class="fsec">By competition</h4>${bat}${bowl}${fld}`:'<p class="note">No 2026 records in the CricClubs tables.</p>'}
+   <p class="fine">Source: CricClubs 2026 batting, bowling and fielding tables per competition. Lions rating: the same formula as the hero card (season runs, strike rate, wickets, economy, fielding, matches). Fielding counts catches and run-outs (keeper catches and stumpings at half), per match, and big-game dismissals: those in the 5 knockouts and 6 close games, from the scorecards.</p>`};
 
 /* ---------- FORMATS ---------- */
 const C=k=>D.comps.find(c=>c.key===k);
@@ -305,26 +321,70 @@ FC.forEach(([n,txt,mode],i)=>{const p=S(n),t=p.byFmt.T20,l=p.byFmt.LONG;
   const line=f=>mode==='bowl'?`<b>${f.wk}</b> wkts<br>econ ${f.econ.toFixed(2)}<br>bowl avg ${f.bavg}`:mode==='both'?`<b>${f.runs}</b> runs<br>SR ${f.sr}<br><b>${f.wk}</b> wkts<br>econ ${f.econ.toFixed(2)}`:`<b>${f.runs}</b> runs<br>avg ${f.avg.toFixed(1)}<br>SR ${f.sr.toFixed(1)}${f.wk?`<br><b>${f.wk}</b> wkts · avg ${f.bavg}`:''}`;
   const d=el('div','fcard pop',`<h4>${first(n)}</h4><div class="vs"><div><i>T20</i>${line(t)}</div><div><i>LONG</i>${line(l)}</div></div><p>${txt}</p>`);d.style.transitionDelay=(i*100)+'ms';fcH.appendChild(d)});
 
-/* ---------- KNOCKOUTS ---------- */
-const KO=[];D.comps.forEach(c=>c.matches.filter(m=>!/League/.test(m.stage)).forEach(m=>KO.push({...m,comp:c.label})));
-KO.sort((a,b)=>(a.o==='W')-(b.o==='W')||a.date.localeCompare(b.date));
-const koOrder=KO.filter(k=>k.o==='L').concat(KO.filter(k=>k.o==='W'&&k.stage==='Semi Final'));
-const koG=$('#koGrid');
-koOrder.forEach((k,i)=>{const [r,w]=k.us.split('/').map(Number);const win=k.o==='W';
-  const d=el('div','kocard pop'+(win?' win':''),`<span class="stg">${k.comp} · ${k.stage}${win?' · the contrast':''}</span>
-   <div class="score"><span data-count="${r}">${r}</span><small>/${w}</small></div><div class="ov">${win?'':'all out · '}${k.usov.split('/')[0]} overs · ${k.batFirst?'batting first':'chasing '+(parseInt(k.them)+1)}</div>
-   <div class="wk">${Array.from({length:10},(_,j)=>`<i class="${j<w?'':'off'}" style="animation-delay:${j*60}ms"></i>`).join('')}</div>
-   <div class="res">${k.result}${k.o==='L'?` (${k.them} in ${k.thov.split('/')[0]} ov)`:''}</div>`);
-  d.style.transitionDelay=(i*120)+'ms';koG.appendChild(d)});
-whenVisible('alloutChart',()=>new Chart($('#alloutChart'),{type:'bar',data:{labels:D.comps.map(c=>c.label),datasets:[{label:'Bowled out',data:D.comps.map(c=>c.allOut),backgroundColor:ORANGE,borderRadius:6},{label:'Not bowled out',data:D.comps.map(c=>c.played-c.allOut),backgroundColor:'#3A3428',borderRadius:6}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:WHITE}},tooltip:{callbacks:{footer:it=>{const c=D.comps[it[0].dataIndex];return `${c.allOut} of ${c.played} innings`}}}},scales:{x:{stacked:true,grid:{display:false},ticks:{color:WHITE,font:{weight:600}}},y:{stacked:true,grid:{color:GRID},ticks:{color:'#d9cfb3',stepSize:1},title:{display:true,text:'Innings',color:'#A89E86'}}}}}));
-whenVisible('widesChart',()=>new Chart($('#widesChart'),{type:'bar',data:{labels:D.comps.map(c=>`${c.label} (${c.wides} in ${c.overs} ov)`),datasets:[{label:'Wides per over',data:D.comps.map(c=>c.widesPerOver),backgroundColor:D.comps.map(c=>c.key==='premier_t20'?ORANGE:'#6B5A38'),borderRadius:6}]},
-  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{min:0,max:0.7,grid:{color:GRID},ticks:{color:'#d9cfb3'}},y:{grid:{display:false},ticks:{color:WHITE,font:{weight:600}}}}},
-  plugins:[{id:'v',afterDatasetsDraw(ch){const ctx=ch.ctx;ctx.save();ctx.font='700 12px Inter, Arial, sans-serif';ctx.fillStyle=WHITE;ch.getDatasetMeta(0).data.forEach((b,i)=>ctx.fillText(ch.data.datasets[0].data[i].toFixed(2),b.x+6,b.y+4));ctx.restore()}}]}));
+/* ---------- AWARDS 2026: Captain's Gold Glove + the two stat awards (recognition_2026.json via data.js; counts re-checked from the CricClubs fielding tables) ---------- */
+const RG=D.recog||{};
+{const G=RG.goldGlove,H=$('#awards');if(G&&H){const gp=S(G.player),gf=FUT.fsum(G.player);
+  const lead=L=>{const f=FUT.fsum(L.player),p=S(L.player),val=L.award==='Safe Hands'?f.ct:p.dis;   // the shown number is the data's, never the JSON's
+    return `<button type="button" class="award pop" data-open="player:${esc(L.player)}" aria-haspopup="dialog"><span class="aimg">${photo(L.player)}</span><span class="abody"><span class="akick">${esc(L.award)}</span><span class="asub">${esc(L.sub)}</span>
+     <b class="aname">${esc(disp(L.player))}</b><span class="aval"><b data-count="${val}">${STATIC?val:0}</b><i>${esc(L.unit)}</i></span><span class="anote">${esc(L.note)}</span></span></button>`};
+  H.innerHTML=`<article class="gglove reveal"><div class="gg-photo"><button type="button" class="gg-face" data-open="player:${esc(G.player)}" aria-haspopup="dialog" aria-label="${esc(disp(G.player))}: open 2026 stats">${photo(G.player)}</button><span class="gg-medal" aria-hidden="true">GOLD<br>GLOVE</span></div>
+    <div class="gg-body"><span class="akick">${esc(G.title)}</span><h3>${esc(disp(G.player))}</h3>
+     <p class="gg-sum"><b data-count="${gf.tot}">${STATIC?gf.tot:0}</b> ${esc(G.summary.replace(/^\d+\s*/,''))}</p>
+     <div class="gg-hl">${G.highlights.map(h=>`<span class="pop"><b>${esc(h.big)}</b><i>${esc(h.label)}</i><em>${esc(h.note)}</em></span>`).join('')}</div>
+     <blockquote class="gg-cite"><p>${esc(G.citation)}</p><footer>${esc(G.citationBy)} · captain&rsquo;s pick, not a stat</footer></blockquote>
+     <details class="gg-list"><summary>All ${gf.tot} dismissals, match by match <i>+</i></summary><ol>${G.rows.map(r=>`<li${r.hot?' class="hot"':''}><span class="gl-d">${esc(r.dis)}</span><span class="gl-g"><b>${esc(r.game)}</b> · ${esc(r.result)}${r.hot?` <em>${esc(r.hot)}</em>`:''}<br>${esc(r.ctx)}</span><a href="https://cricclubs.com/QCF/viewScorecard.do?matchId=${r.mid}&amp;clubId=1834" target="_blank" rel="noopener" aria-label="Scorecard, match ${r.mid}">${r.mid} ↗</a></li>`).join('')}</ol></details>
+    </div></article><div class="aside">${G.leaders.map(lead).join('')}</div>`;
+  if(gf.tot!==gp.dis)console.warn('gold glove: fielding table total differs from season dismissals')}}
 
+/* ---------- ROAD TO 2027 (replaces "Where we grow next"): recognition_2026.json + live season data ---------- */
+{const pct=(a,b)=>(100*a/b).toFixed(1);
+ const strip=(H,html)=>{const e=$(H);if(e)e.innerHTML=html};
+ /* strengths */
+ strip('#rStrengths',(RG.strengths||[]).map((x,i)=>`<div class="str pop${i===0?' wide':''}" style="transition-delay:${i%4*90}ms"><b>${esc(x.big)}</b><span class="sk">${esc(x.k)}</span><p>${esc(x.v)}</p></div>`).join(''));
+ /* Beyond the Big Two: computed here from data.js season totals */
+ {const R=D.totals.runs,W=D.totals.wkts,bt=tr,bw=tw,ko=(RG.bigTwo||{}).koRunsShare;
+  const bar=(lab,rest,all,unit)=>`<div class="sbar"><div class="sl"><span>${lab}</span><b><span data-count="${pct(rest,all)}">${STATIC?pct(rest,all):'0.0'}</span>%</b></div><div class="st"><i class="rest" style="--w:${pct(rest,all)}%"></i><i class="big2" style="--w:${pct(all-rest,all)}%"></i></div>
+    <div class="sx"><span>Rest of the squad: ${rest.toLocaleString()} ${unit}</span><span>Harsimran + Abhinav: ${(all-rest).toLocaleString()}</span></div></div>`;
+  strip('#rBig2',bar('Runs from the rest of the squad',R-bt,R,'runs')+bar('Wickets from the rest of the squad',W-bw,W,'wkts')+
+   (ko?`<p class="goalline"><b>Goal:</b> grow the runs share. In the knockouts the rest of the squad made ${(100-ko).toFixed(1)}% of the bat runs, against ${pct(R-bt,R)}% all season.</p>`:''))}
+ /* momentum meter */
+ strip('#rMomentum',(RG.momentum||[]).map(m=>{const mx=Math.max(m.a,m.b),up=m.lower?m.b<m.a:m.b>m.a,f=v=>Number.isInteger(v)?v:v.toFixed(2);
+   return `<div class="mm${up?' up':' down'}"><span class="mn">${esc(first(m.player))}</span><span class="ml">${esc(m.label)}</span>
+    <span class="mb"><i class="h1" style="--w:${(100*m.a/mx).toFixed(1)}%"><em>${f(m.a)}</em></i><i class="h2" style="--w:${(100*m.b/mx).toFixed(1)}%"><em>${f(m.b)}</em></i></span>
+    <span class="ma" aria-label="${up?'rising':'dipped'}">${up?'▲':'▼'}</span>${m.note?`<span class="mnote">${esc(m.note)}</span>`:''}</div>`}).join('')+'<p class="legend2"><i class="k1"></i>May&ndash;Jul <i class="k2"></i>Aug&ndash;Oct <span>Re-derived from the scorecards; the competition mix differs between halves, so read it as a guide.</span></p>');
+ /* Rising Lions carousel */
+ strip('#rTrack',(RG.rising||[]).map(r=>`<button type="button" class="rl" data-open="player:${esc(r.player)}" aria-haspopup="dialog"><span class="rlimg">${photo(r.player)}</span><span class="rlb">${r.badges.map(b=>`<em>${esc(b)}</em>`).join('')}</span><b>${esc(disp(r.player))}</b><span>${esc(r.line)}</span></button>`).join(''));
+ {const T=$('#rTrack'),C=$('#rRising');if(T&&C){const step=d=>{const c=T.querySelector('.rl');T.scrollBy({left:d*((c?c.offsetWidth:260)+14),behavior:RM||STATIC?'auto':'smooth'})};
+   C.querySelector('.prev').onclick=()=>step(-1);C.querySelector('.next').onclick=()=>step(1);
+   T.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();step(1)}if(e.key==='ArrowLeft'){e.preventDefault();step(-1)}})}}
+ /* phase heatmap (T20 over summaries) */
+ {const ph=RG.phases;if(ph){
+   const good=(side,k,v)=>side==='Batting'?(k==='rr'?(v-6)/3:(3.2-v)/1.6):(k==='rr'?(9.5-v)/3.5:(v-1.6)/1.8);
+   const cell=(side,r,j)=>{const g=Math.max(0,Math.min(1,(good(side,'rr',r.rr[j])+good(side,'wk',r.wk[j]))/2));
+     return `<td class="hc" style="--g:${g.toFixed(2)}"><b>${r.rr[j].toFixed(2)}</b><i>runs/over</i><span>${r.wk[j].toFixed(2)} wkts/inns</span><small>${r.n[j]} inns</small></td>`};
+   strip('#rHeat',`<div class="table-scroll"><table class="heatt"><thead><tr><th></th>${ph.cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${ph.rows.map(r=>`<tr${r.scope!=='All T20'?' class="ko"':''}><th>${r.side}<i>${r.scope}</i></th>${ph.cols.map((c,j)=>cell(r.side,r,j)).join('')}</tr>`).join('')}</tbody></table></div>
+    <p class="legend2"><i class="hk lo"></i>gap to close <i class="hk hi"></i>strength <span>Batting: more runs, fewer wickets lost = stronger. Bowling: fewer runs, more wickets = stronger.</span></p><p class="note">${esc(ph.note)} The knockout rows are small samples (2&ndash;4 innings).</p>`)}}
+ /* knockout pressure meter */
+ strip('#rPress',(RG.pressure||[]).map(k=>`<div class="pm ${k.res==='W'?'w':'l'}${k.at6[1]>=3?' hot':''}"><span class="pst">${esc(k.stage)}<em>v ${esc(k.opp)}</em></span>
+   <span class="pg" role="img" aria-label="${k.at6[0]} for ${k.at6[1]} after 6 overs">${Array.from({length:5},(_,j)=>`<i class="${j<k.at6[1]?'on':''}"></i>`).join('')}</span>
+   <span class="ps"><b>${k.at6[0]}/${k.at6[1]}</b><i>after 6</i></span><span class="pr"><i class="chip ${k.res}">${k.res}</i>${esc(k.result)}</span></div>`).join('')+
+   `<p class="goalline"><b>The lesson:</b> both knockout wins were 2 or fewer down after 6 overs. 4 down after 6 lost the Final and the Premier T20 quarter-final. Goal 1 below is built on this.</p>`);
+ /* six goals */
+ strip('#rGoals',(RG.goals||[]).map((g,i)=>`<article class="goal pop" style="transition-delay:${i%3*110}ms"><span class="gn">${String(g.n).padStart(2,'0')}</span><h4>${esc(g.area)}</h4>
+   <dl><dt>2026</dt><dd>${esc(g.base)}</dd><dt>Practice</dt><dd>${esc(g.practice)}</dd><dt class="t">2027 target</dt><dd class="t">${esc(g.target)}</dd></dl></article>`).join(''));
+ /* goal tracker: bar from 2026 baseline to the 2027 flag; scale fits both */
+ strip('#rTrack27',(RG.goals||[]).map(g=>{const t=g.track;if(!t)return '';const mx=Math.max(t.base,t.goal)*1.25,bp=100*t.base/mx,gp=100*t.goal/mx,dp=Number.isInteger(t.base)?0:2;
+   return `<div class="tk"><span class="tl"><b>${String(g.n).padStart(2,'0')}</b>${esc(t.label)}</span><span class="tb"><i class="tfill" style="--w:${bp.toFixed(1)}%"></i><i class="tgap" style="--l:${Math.min(bp,gp).toFixed(1)}%;--w:${Math.abs(gp-bp).toFixed(1)}%"></i>
+     <span class="tflag" style="--l:${gp.toFixed(1)}%" aria-hidden="true">⚑</span></span><span class="tv"><span>2026 <b>${esc(t.baseText||t.base.toFixed(dp))}</b></span><span class="tg">2027 ${t.goalText?esc(t.goalText):`${t.lower?'≤':''}<b>${t.goal.toFixed(dp)}</b>${t.lower?'':'+'}`}</span><span class="t0">0 matches logged</span></span></div>`}).join(''));
+ /* personal challenge cards */
+ strip('#rChall',(RG.challenges||[]).map((c,i)=>`<button type="button" class="ch pop" style="transition-delay:${i%3*100}ms" data-open="player:${esc(c.player)}" aria-haspopup="dialog"><span class="chimg">${photo(c.player)}</span><span class="chb"><i>2027 challenge</i><b>${esc(disp(c.player))}</b><strong>${esc(c.goal)}</strong><span>${esc(c.base)}</span></span></button>`).join(''));
+ strip('#rSrc','Sources: CricClubs QCF 2026 scorecards, ball-by-ball and season tables. Phase numbers use the T20 over summaries only; momentum compares May&ndash;Jul with Aug&ndash;Oct. No ages are recorded, so &ldquo;Rising Lions&rdquo; means rising form, not age.');
+}
 
 /* ---------- LIONS MOMENTS (v3): data.js <- build_data.py <- lions_moments.json ---------- */
-const M=D.moments, CAT={comeback:'Comeback',dominant:'Dominant','turning point':'Turning point',drama:'Drama'};
+const M=D.moments, CAT={comeback:'Comeback',dominant:'Dominant','turning point':'Turning point',drama:'Drama','big stage':'Big stage'};
+/* featured player's line (lions_moments.json feature / feature_line) */
+const fl=(m,cls)=>m.feature&&m.featLine?`<span class="fline ${cls||''}"><b>${esc(first(m.feature))}</b>${esc(m.featLine)}</span>`:'';
 const meta=m=>[m.comp+(m.compNote?` (${m.compNote})`:''),m.stage,fmtDate(m.date),'v '+m.opp].filter(Boolean).join(' · ');
 const firstSentence=t=>{const i=t.search(/\.\s/);return i>0?t.slice(0,i+1):t};
 const pic=m=>(m.people||[]).find(n=>P.players[n]);
@@ -334,17 +394,21 @@ const sc=m=>`<a class="src" href="${m.url}" target="_blank" rel="noopener">Score
 const mid=m=>m.rank?'top:'+m.rank:'hm:'+M.hm.indexOf(m);
 const card=(m,cls)=>`<article class="mcard ${cls}">${mimg(m)}<button type="button" class="mhit" data-open="moment:${mid(m)}" aria-haspopup="dialog">
   <div class="mtop">${m.rank?`<span class="rk">${String(m.rank).padStart(2,'0')}</span>`:''}<span class="cat c-${m.cat.replace(' ','-')}">${CAT[m.cat]||m.cat}</span></div>
-  <span class="k">${esc(meta(m))}</span><h4>${esc(m.title)}</h4>${cls==='small'?'':`<p>${esc(firstSentence(m.story))}</p>`}<span class="more">Read the story <i>+</i></span></button>${sc(m)}</article>`;
+  <span class="k">${esc(meta(m))}</span><h4>${esc(m.title)}</h4>${fl(m)}${cls==='small'?'':`<p>${esc(firstSentence(m.story))}</p>`}<span class="more">Read the story <i>+</i></span></button>${sc(m)}</article>`;
 {const f=M.top[0];$('#mFeature').innerHTML=`<article class="feature pop">${mimg(f,'big')}<div class="fbody"><button type="button" class="mhit" data-open="moment:top:1" aria-haspopup="dialog">
   <div class="mtop"><span class="rk big1">01</span><span class="cat c-${f.cat.replace(' ','-')}">${CAT[f.cat]}</span></div><span class="k">${esc(meta(f))}</span>
-  <h3 class="ftitle">${esc(f.title)}</h3><p>${esc(firstSentence(f.story))}</p><span class="more">Read the story <i>+</i></span></button>${sc(f)}</div></article>`}
+  <h3 class="ftitle">${esc(f.title)}</h3>${fl(f,'big')}<p>${esc(firstSentence(f.story))}</p><span class="more">Read the story <i>+</i></span></button>${sc(f)}</div></article>`}
 const put=(id,html)=>{const H=$(id);H.innerHTML=html;[...H.children].forEach((c,i)=>{c.classList.add('flipin');c.style.transitionDelay=(i%3*140)+'ms'})};
-put('#mTop',M.top.slice(1).map(m=>card(m,'')).join(''));
+put('#mTop',M.top.filter(m=>m.rank>1&&m.rank<=10).map(m=>card(m,'')).join(''));
+/* the Final: a card of its own (rank 11 in lions_moments.json), framed as fight on the biggest stage */
+{const H=$('#mFinal'),xs=M.top.filter(m=>m.rank>10);if(H)H.innerHTML=xs.map(f=>`<article class="feature final pop">${mimg(f,'big')}<div class="fbody"><button type="button" class="mhit" data-open="moment:top:${f.rank}" aria-haspopup="dialog">
+  <div class="mtop"><span class="rk big1 fin">Final</span><span class="cat c-big-stage">Fight on the biggest stage</span></div><span class="k">${esc(meta(f))}</span>
+  <h3 class="ftitle">${esc(f.title)}</h3>${fl(f,'big')}<p>${esc(f.story)}</p><span class="more">Read the story <i>+</i></span></button>${sc(f)}</div></article>`).join('')}
 put('#mHM',M.hm.map(m=>card(m,'small')).join(''));
-$('#mSrc').textContent='Moments: CricClubs QCF scorecards and ball-by-ball. Pictures are the CricClubs profile photo of the Lion named first in the moment; there are no match-day photos in the set.';
+$('#mSrc').textContent='Moments: CricClubs QCF scorecards and ball-by-ball. Each card features one Lion: his CricClubs profile photo and his line from the scorecard. There are no match-day photos in the set.';
 builders.moment=id=>{const [g,i]=id.split(':');const m=g==='top'?M.top.find(x=>x.rank==+i):M.hm[+i];
-  return `<div class="mdmoment">${mimg(m,'big')}<div><div class="mtop">${m.rank?`<span class="rk">${String(m.rank).padStart(2,'0')}</span>`:'<span class="rk hm">HM</span>'}<span class="cat c-${m.cat.replace(' ','-')}">${CAT[m.cat]||m.cat}</span></div>
-  <span class="k">${esc(meta(m))}</span><h3 id="mdTitle" class="mdh">${esc(m.title)}</h3><p>${esc(m.story)}</p><div class="ks">${esc(m.stat)}</div>
+  return `<div class="mdmoment">${mimg(m,'big')}<div><div class="mtop">${m.rank>10?'<span class="rk fin">Final</span>':m.rank?`<span class="rk">${String(m.rank).padStart(2,'0')}</span>`:'<span class="rk hm">HM</span>'}<span class="cat c-${m.cat.replace(' ','-')}">${CAT[m.cat]||m.cat}</span></div>
+  <span class="k">${esc(meta(m))}</span><h3 id="mdTitle" class="mdh">${esc(m.title)}</h3>${fl(m,'big')}<p>${esc(m.story)}</p><div class="ks">${esc(m.stat)}</div>
   <a class="btn gold" href="${m.url}" target="_blank" rel="noopener">Full scorecard · match ${m.mid} ↗</a></div></div>`};
 
 /* ---------- KNOCKOUT FALL OF WICKETS (lions_moments.json knockout_collapses + md Pattern) ---------- */

@@ -5808,6 +5808,8 @@ window.PL_DATA={
     "stat": "Harsimranjit 3.2-0-20-3 (hat-trick: 17.6, 19.1, 19.2, all bowled) & 39 (23); Royal 127/9; Lions 128/5 (16.4); won by 5 wickets",
     "url": "https://cricclubs.com/QCF/viewScorecard.do?matchId=4391&clubId=1834",
     "mid": 4391,
+    "feature": "Harsimranjit Singh Sindhar",
+    "featLine": "3.2-0-20-3 hat-trick (17.6, 19.1, 19.2, all bowled) plus 39 (23), in a knockout",
     "people": [
      "Harsimranjit Singh Sindhar",
      "Chiragdeep Singh"
@@ -5826,9 +5828,11 @@ window.PL_DATA={
     "stat": "Lions 227/4 (20); Harsimranjit 69 (46), Rowan 50 (40), Pankaj 28 (11); Sujaan 3-0-23-3; Legends 112 all out (14.3); won by 115 runs",
     "url": "https://cricclubs.com/QCF/viewScorecard.do?matchId=4400&clubId=1834",
     "mid": 4400,
+    "feature": "Rowan Singh Sandhu",
+    "featLine": "50 (40), his first fifty, in a 122-run 2nd-wicket stand in a semi-final",
     "people": [
-     "Harsimranjit Singh Sindhar",
      "Rowan Singh Sandhu",
+     "Harsimranjit Singh Sindhar",
      "Pankaj Sharma",
      "Sujaan Singh"
     ]
@@ -5846,7 +5850,10 @@ window.PL_DATA={
     "stat": "Lions 154/8; Adastrians 153/9 (20); 9 needed off the last over, 7 conceded; Abhinav 3/33 & 26 (10); won by 1 run",
     "url": "https://cricclubs.com/QCF/viewScorecard.do?matchId=3676&clubId=1834",
     "mid": 3676,
+    "feature": "Sujaan Singh",
+    "featLine": "4-0-32-2; defending 9 in the 20th over, he gave 7 and finished it with a run out",
     "people": [
+     "Sujaan Singh",
      "Abhinav Singh",
      "Rowan Singh Sandhu"
     ]
@@ -5864,9 +5871,11 @@ window.PL_DATA={
     "stat": "37/6 (7.4 ov) \u2192 145 all out; Pankaj 53 (25, 4\u00d76) & 3-0-10-4; Punjab XI 89 all out (16.4); won by 56 runs",
     "url": "https://cricclubs.com/QCF/viewScorecard.do?matchId=3697&clubId=1834",
     "mid": 3697,
+    "feature": "Pankaj Sharma",
+    "featLine": "53 (25) with 4 sixes, plus 3-0-10-4",
     "people": [
-     "Lakhwinder Singh",
      "Pankaj Sharma",
+     "Lakhwinder Singh",
      "Manav Bathla"
     ]
    },
@@ -5883,9 +5892,11 @@ window.PL_DATA={
     "stat": "91/6 (12.5 ov), 44 needed off 42 \u2192 139/6 (17 ov); Pankaj 43* (22); Abhinav 54 (34, 5\u00d76); won by 4 wickets",
     "url": "https://cricclubs.com/QCF/viewScorecard.do?matchId=3682&clubId=1834",
     "mid": 3682,
+    "feature": "Pankaj Sharma",
+    "featLine": "43* (22), 3 sixes, unbroken 48 stand",
     "people": [
-     "Abhinav Singh",
      "Pankaj Sharma",
+     "Abhinav Singh",
      "Jashan Lubana"
     ]
    },
@@ -5902,6 +5913,8 @@ window.PL_DATA={
     "stat": "Abhinav 77 (26, 3\u00d74, 10\u00d76, SR 296); 28-run over; Lions 119/1 (7 ov); won by 9 wickets",
     "url": "https://cricclubs.com/QCF/viewScorecard.do?matchId=4353&clubId=1834",
     "mid": 4353,
+    "feature": "Abhinav Singh",
+    "featLine": "77 (26), 10 sixes, SR 296; 119 chased in 7 overs",
     "people": [
      "Abhinav Singh"
     ]
@@ -5919,6 +5932,8 @@ window.PL_DATA={
     "stat": "Legends 10/4 (5.6), 26/7 (10.4), 95 all out (32.1); Harsimranjit 3/17, Pradeep 3 wkts; Abhinav 67* (22, 7\u00d76); 97/1 (6.1); won by 9 wickets",
     "url": "https://cricclubs.com/QCF/viewScorecard.do?matchId=4368&clubId=1834",
     "mid": 4368,
+    "feature": "Pradeep Singh",
+    "featLine": "5-1-14-3, 22 dot balls",
     "people": [
      "Pradeep Singh",
      "Humayun Afzal",
@@ -5940,10 +5955,12 @@ window.PL_DATA={
     "stat": "Royal 113/5 needing 31 off 36 \u2192 128 all out; Abhinav 4.5-0-24-5; won by 15 runs",
     "url": "https://cricclubs.com/QCF/viewScorecard.do?matchId=4125&clubId=1834",
     "mid": 4125,
+    "feature": "Darshpreet Singh Sidhu",
+    "featLine": "4 catches behind the stumps, 4 of Abhinav\u2019s 5 wickets",
     "people": [
+     "Darshpreet Singh Sidhu",
      "Pankaj Sharma",
-     "Abhinav Singh",
-     "Darshpreet Singh Sidhu"
+     "Abhinav Singh"
     ]
    },
    {
@@ -5959,7 +5976,10 @@ window.PL_DATA={
     "stat": "SEP 85/5 needing 49 off 78 \u2192 114 all out (34.1); Harsimranjit 7-1-9-2, Arshdeep 2/21, Sujaan 2/18, Vahora 2/29; won by 19 runs",
     "url": "https://cricclubs.com/QCF/viewScorecard.do?matchId=4251&clubId=1834",
     "mid": 4251,
+    "feature": "Arshdeep Singh",
+    "featLine": "6-1-21-2 and 2 catches, including top-scorer Jaspal Khural (49), the turning point at 85",
     "people": [
+     "Arshdeep Singh",
      "Harsimranjit Singh Sindhar",
      "Mohamad Vahora",
      "Pankaj Sharma",
@@ -5979,9 +5999,31 @@ window.PL_DATA={
     "stat": "LaSalle 119/3 (12 ov) \u2192 141/7 (15.1) \u2192 157 all out (17.5); Abhinav 87 (61) & 3.5-0-31-3; Harsimranjit 38* (14) & 3 wkts; won by 26 runs",
     "url": "https://cricclubs.com/QCF/viewScorecard.do?matchId=3744&clubId=1834",
     "mid": 3744,
+    "feature": "Chiragdeep Singh",
+    "featLine": "2 catches in 3 balls (14.5, 15.1): LaSalle 140/4 \u2192 141/7",
     "people": [
+     "Chiragdeep Singh",
      "Abhinav Singh",
      "Harsimranjit Singh Sindhar"
+    ]
+   },
+   {
+    "rank": 11,
+    "cat": "big stage",
+    "title": "Vahora\u2019s 43* in the Final",
+    "comp": "DivX T20",
+    "compNote": "",
+    "stage": "Final",
+    "date": "2026-10-11",
+    "opp": "Montreal Knight Riders",
+    "story": "The Lions were 76/5 after 11 overs of the Div X T20 Final when Mohamad Vahora walked in. He made 43 not out off 28 balls with 4 sixes (13.6, 16.1, 16.5 and 18.3), 43 of the 55 runs the Lions added from there, and was still there when the innings closed at 131 all out in 19.2 overs. Knight Riders chased it in 15.5 overs, but Vahora showed the fight we take into 2027.",
+    "stat": "Vahora 43* (28), 4 sixes, SR 153.57, the Lions\u2019 top score; Lions 76/5 (11) to 131 all out (19.2); Knight Riders 135/1 (15.5), won by 9 wickets",
+    "url": "https://cricclubs.com/QCF/viewScorecard.do?matchId=4434&clubId=1834",
+    "mid": 4434,
+    "feature": "Mohamad Vahora",
+    "featLine": "43* (28), 4 sixes: the Lions\u2019 top score on the biggest stage",
+    "people": [
+     "Mohamad Vahora"
     ]
    }
   ],
@@ -5999,6 +6041,8 @@ window.PL_DATA={
     "stat": "86/5 \u2192 157/8 (28.5, D/L target 157); Darshpreet 26* (58); Harsimranjit 5-1-15-4; won by 2 wickets",
     "url": "https://cricclubs.com/QCF/viewScorecard.do?matchId=4115&clubId=1834",
     "mid": 4115,
+    "feature": "Darshpreet Singh Sidhu",
+    "featLine": "26* (58), anchoring the D/L chase",
     "people": [
      "Darshpreet Singh Sidhu",
      "Pankaj Sharma",
@@ -6019,9 +6063,11 @@ window.PL_DATA={
     "stat": "Royal 65/4 needing 37 off 30 \u2192 91/6 (18); Abhinav 61 (30); won by 10 runs (D/L)",
     "url": "https://cricclubs.com/QCF/viewScorecard.do?matchId=3808&clubId=1834",
     "mid": 3808,
+    "feature": "Raghav Tara",
+    "featLine": "4-0-17-1; his overs 15 and 17 cost 4 runs each",
     "people": [
-     "Pankaj Sharma",
-     "Raghav Tara"
+     "Raghav Tara",
+     "Pankaj Sharma"
     ]
    },
    {
@@ -6037,9 +6083,11 @@ window.PL_DATA={
     "stat": "67/3 \u2192 141/4 (74 stand) \u2192 162/6 (18.4); won by 4 wickets",
     "url": "https://cricclubs.com/QCF/viewScorecard.do?matchId=3670&clubId=1834",
     "mid": 3670,
+    "feature": "Rowan Singh Sandhu",
+    "featLine": "24 (24) in the 74-run stand",
     "people": [
-     "Harsimranjit Singh Sindhar",
-     "Rowan Singh Sandhu"
+     "Rowan Singh Sandhu",
+     "Harsimranjit Singh Sindhar"
     ]
    },
    {
@@ -6055,9 +6103,11 @@ window.PL_DATA={
     "stat": "Lions 236/8; Harsimranjit 76* (59) & 3/24; Sujaan 3.4-0-17-4; won by 75 runs (D/L)",
     "url": "https://cricclubs.com/QCF/viewScorecard.do?matchId=4378&clubId=1834",
     "mid": 4378,
+    "feature": "Sujaan Singh",
+    "featLine": "3.4-0-17-4, his best figures of 2026",
     "people": [
-     "Harsimranjit Singh Sindhar",
-     "Sujaan Singh"
+     "Sujaan Singh",
+     "Harsimranjit Singh Sindhar"
     ]
    },
    {
@@ -6073,7 +6123,10 @@ window.PL_DATA={
     "stat": "Mavericks 128 all out (32.3); Lions 128 all out (33.3); 118/9 \u2192 128 with the last pair; tie",
     "url": "https://cricclubs.com/QCF/viewScorecard.do?matchId=4277&clubId=1834",
     "mid": 4277,
+    "feature": "Chiragdeep Singh",
+    "featLine": "In a tie: ran out Basant Singh for the first wicket (19/1, 5.6) and caught Sadiq-ur-Rehman (56/5, 14.1)",
     "people": [
+     "Chiragdeep Singh",
      "Amit Vijayan"
     ]
    }
@@ -6516,5 +6569,548 @@ window.PL_DATA={
   "credit": {
    "Mohamad Vahora": "club photo, 2026 jersey"
   }
+ },
+ "fieldKey": {
+  "Jashan Lubana": 2,
+  "Darshpreet Singh Sidhu": 16,
+  "Pankaj Sharma": 8,
+  "Abhinav Singh": 8,
+  "Harsimranjit Singh Sindhar": 5,
+  "Humayun Afzal": 6,
+  "Arshdeep Singh": 7,
+  "Mohamad Vahora": 6,
+  "Rowan Singh Sandhu": 3,
+  "Chiragdeep Singh": 5,
+  "Sujaan Singh": 3,
+  "Pradeep Singh": 1,
+  "Manpreet Singh": 5,
+  "Jaskaran Saini": 1
+ },
+ "recog": {
+  "source": "proposal_recognition_growth.md (sections 3, 3b, 5a-5c), analysis/recog/agg.py + team_inns.json, season CSVs. No figure here is estimated.",
+  "goldGlove": {
+   "player": "Chiragdeep Singh",
+   "title": "Captain\u2019s Gold Glove 2026",
+   "summary": "14 dismissals: 12 catches (incl. 1 caught-and-bowled), 1 direct run-out, 1 run-out assist",
+   "citation": "Captain\u2019s pick: the saves, stops and energy the scorecard never records.",
+   "citationBy": "Harsimranjit Singh Sindhar, captain",
+   "rows": [
+    {
+     "mid": 3744,
+     "game": "Premier T20 v LaSalle",
+     "result": "W by 26",
+     "dis": "2 c",
+     "ctx": "Manpreet off Harsimran (14.5) and Zeeshan Zamir off Abhinav (15.1): 140/4 \u2192 141/7"
+    },
+    {
+     "mid": 4143,
+     "game": "DivX30 v Pakistan",
+     "result": "L by 5 wkts",
+     "dis": "1 c",
+     "ctx": "Zain Khan 57 off Pankaj (18.1), breaking a 55-run stand (42/3 \u2192 97/4)"
+    },
+    {
+     "mid": 4206,
+     "game": "DivX30 v LaSalle",
+     "result": "L by 73",
+     "dis": "3 c",
+     "ctx": "Navpreet Singh off Jashan (8.3); Ashir Zamir 39 off Vahora (14.3); Zeeshan Zamir off Vahora (18.3)",
+     "hot": "3-catch game"
+    },
+    {
+     "mid": 4251,
+     "game": "Premier 40 v Sher-e-Punjab",
+     "result": "W by 19",
+     "dis": "2 c",
+     "ctx": "Sahil Cheema off Harsimran (8.6, 28/3) and Karan Singh off Arshdeep (14.4, 40/4), in the 114 all-out squeeze",
+     "hot": "19-run win"
+    },
+    {
+     "mid": 4256,
+     "game": "DivX30 v Adastrians",
+     "result": "L by 33",
+     "dis": "1 run out (direct)",
+     "ctx": "Sabir Sheikh (10.5, 43/4)"
+    },
+    {
+     "mid": 4277,
+     "game": "Premier 40 v Mavericks",
+     "result": "Tie",
+     "dis": "1 run out (assist) + 1 c",
+     "ctx": "First wicket Basant Singh (5.6, 19/1, with Darshpreet); Sadiq-ur-Rehman off Pankaj (14.1, 56/5)",
+     "hot": "Tie"
+    },
+    {
+     "mid": 4368,
+     "game": "Premier 40 v Legends",
+     "result": "W by 9 wkts",
+     "dis": "1 c",
+     "ctx": "Kumuthan Thampirasa off Pradeep (4.3): 7/3, on the way to Legends 26/7"
+    },
+    {
+     "mid": 4378,
+     "game": "Premier 40 v LaSalle",
+     "result": "W by 75 (D/L)",
+     "dis": "1 c",
+     "ctx": "Amrinder Singh off Abhinav (25.6, 156/8)"
+    },
+    {
+     "mid": 4400,
+     "game": "DivX T20 Semi-final v Legends",
+     "result": "W by 115",
+     "dis": "1 c&b",
+     "ctx": "Senthooran Selvarasa, the final wicket (14.3, 112 all out)",
+     "hot": "Semi-final last wicket"
+    }
+   ],
+   "highlights": [
+    {
+     "big": "3",
+     "label": "catches v LaSalle (4206)",
+     "note": "the season\u2019s most in one match by an outfielder (shared)"
+    },
+    {
+     "big": "4",
+     "label": "dismissals in the tie (4277) and the 19-run win (4251)",
+     "note": "the most by any Lion in the season\u2019s two closest league games"
+    },
+    {
+     "big": "c&b",
+     "label": "the last wicket of the semi-final (4400)",
+     "note": "Legends 112 all out in 14.3"
+    }
+   ],
+   "leaders": [
+    {
+     "award": "Golden Gloves",
+     "sub": "keeper, most dismissals",
+     "player": "Darshpreet Singh Sidhu",
+     "value": 32,
+     "unit": "dismissals",
+     "note": "20 keeper catches, 4 catches, 1 stumping, 7 run-outs"
+    },
+    {
+     "award": "Safe Hands",
+     "sub": "most outfield catches",
+     "player": "Humayun Afzal",
+     "value": 17,
+     "unit": "outfield catches",
+     "note": "keeper catches excluded"
+    }
+   ]
+  },
+  "badges": {
+   "Chiragdeep Singh": "GOLD GLOVE",
+   "Darshpreet Singh Sidhu": "GOLDEN GLOVES",
+   "Humayun Afzal": "SAFE HANDS"
+  },
+  "strengths": [
+   {
+    "k": "Winning record",
+    "big": "W19",
+    "v": "31 played: W19 L11 T1; reached 2 semi-finals and 1 final"
+   },
+   {
+    "k": "Death bowling",
+    "big": "6.25",
+    "v": "runs/over in T20 overs 16\u201320, 2.85 wkts per innings. Our best phase"
+   },
+   {
+    "k": "Middle-overs bowling",
+    "big": "3.23",
+    "v": "wkts per innings in T20 overs 7\u201315, at 6.64 runs/over"
+   },
+   {
+    "k": "Bowling depth",
+    "big": "7",
+    "v": "bowlers with 17+ wkts: Harsimran 49, Sujaan 30, Pankaj 27, Abhinav 23, Humayun 22, Vahora 20, Pradeep 17"
+   },
+   {
+    "k": "40-over control",
+    "big": "4.03",
+    "v": "Premier 40 econ: Harsimran 4.03, Vahora 4.10, Sujaan 4.55, Humayun 4.79"
+   },
+   {
+    "k": "Fielding",
+    "big": "191",
+    "v": "dismissals: 118 catches, 29 keeper catches, 2 stumpings, 42 run-outs (12 direct)"
+   },
+   {
+    "k": "Finishing power",
+    "big": "8.37",
+    "v": "runs/over in T20 death overs; Pankaj SR 150.6"
+   }
+  ],
+  "goals": [
+   {
+    "n": 1,
+    "area": "Powerplay survival",
+    "base": "T20 overs 1\u20136: 1.93 wkts lost per innings (knockouts 2.75). 1.21 wkts lost in wins vs 2.18 in losses. All 4 innings with 3+ down after 6 overs were losses (4347, 4434, 3816, 4418)",
+    "practice": "\u201cFirst 36 balls\u201d net game: lose 2 wickets and you\u2019re out; set opening pairs; leave/defend drills vs the new ball",
+    "target": "\u22641.5 wkts per powerplay; never 3 down after 6 overs",
+    "track": {
+     "label": "T20 powerplay wkts lost / inns",
+     "base": 1.93,
+     "goal": 1.5,
+     "lower": true
+    }
+   },
+   {
+    "n": 2,
+    "area": "Batting depth beyond the big two",
+    "base": "Harsimran + Abhinav = 35.6% of bat runs (41.7% in knockouts). 11 of 14 fifties were theirs; others made 3 (Rowan 50, Darshpreet 61*, Pankaj 53)",
+    "practice": "Partnership drill (30-ball target chases in pairs); each top-7 batter gets a role card (anchor / rotator / finisher)",
+    "target": "6+ fifties from the rest of the squad; a third batter with 300+ runs at SR 110+",
+    "track": {
+     "label": "Fifties by the rest of the squad",
+     "base": 3,
+     "goal": 6,
+     "lower": false
+    }
+   },
+   {
+    "n": 3,
+    "area": "Bat the full overs",
+    "base": "All out in 11 of 31 innings, including all 3 knockout losses (68, 136, 131). 27 ducks. T20 middle overs: 2.93 wkts per innings",
+    "practice": "Middle-overs strike rotation (target \u226445% dot balls); \u201ccollapse drill\u201d: 4 down, bat 10 overs",
+    "target": "All out \u22646 times; ducks \u226415; T20 middle-overs wkts \u22642.3 per innings",
+    "track": {
+     "label": "Times all out",
+     "base": 11,
+     "goal": 6,
+     "lower": true
+    }
+   },
+   {
+    "n": 4,
+    "area": "Cut the extras",
+    "base": "347 wides + 18 no-balls in 693.5 overs (0.50 wides/over). 14.6 extras per innings conceded",
+    "practice": "Target-zone bowling with wide-line cones; \u201cclean over\u201d challenge (6 legal balls in a row) logged at every net",
+    "target": "\u22640.35 wides/over; \u226410 extras per innings",
+    "track": {
+     "label": "Wides per over",
+     "base": 0.5,
+     "goal": 0.35,
+     "lower": true
+    }
+   },
+   {
+    "n": 5,
+    "area": "Powerplay bowling",
+    "base": "T20 overs 1\u20136 conceded 7.54 runs/over (knockouts 9.11), versus 6.25 at the death",
+    "practice": "Fixed new-ball pair and plans per opponent; hard-length accuracy drill",
+    "target": "T20 powerplay economy \u22646.8; knockout powerplay \u22647.5",
+    "track": {
+     "label": "T20 powerplay economy",
+     "base": 7.54,
+     "goal": 6.8,
+     "lower": true
+    }
+   },
+   {
+    "n": 6,
+    "area": "Share the knockout load",
+    "base": "In the 3 knockout losses, Harsimran + Abhinav took 7 of our 9 wickets (77.8%)",
+    "practice": "Simulated knockout games in practice with the top 2 rested from bowling",
+    "target": "2+ other bowlers each with a wicket in every knockout",
+    "track": {
+     "label": "Knockout-loss wickets by the rest of the squad",
+     "base": 2,
+     "goal": 9,
+     "of": 9,
+     "lower": false,
+     "baseText": "2 of 9",
+     "goalText": "2+ wicket-takers per KO"
+    }
+   }
+  ],
+  "rising": [
+   {
+    "player": "Sujaan Singh",
+    "badges": [
+     "30-Wicket Club",
+     "Final-over Ice"
+    ],
+    "line": "30 wkts, 2nd on the team; defended 9 in the last over for 7 runs (3676)"
+   },
+   {
+    "player": "Pankaj Sharma",
+    "badges": [
+     "Strike-rate 150"
+    ],
+    "line": "375 runs at SR 150.6, 19 sixes; 27 wkts"
+   },
+   {
+    "player": "Darshpreet Singh Sidhu",
+    "badges": [
+     "Golden Gloves"
+    ],
+    "line": "32 dismissals, most on the team"
+   },
+   {
+    "player": "Mohamad Vahora",
+    "badges": [
+     "Economy Engine",
+     "Final-day 43*"
+    ],
+    "line": "Premier 40 econ 4.10; 43* (28) in the Div X T20 Final"
+   },
+   {
+    "player": "Rowan Singh Sandhu",
+    "badges": [
+     "Big-stage fifty"
+    ],
+    "line": "50 (40) in the Div X T20 semi-final"
+   },
+   {
+    "player": "Arshdeep Singh",
+    "badges": [
+     "Turnaround"
+    ],
+    "line": "Economy 8.02 (May\u2013Jul) \u2192 6.02 (Aug\u2013Oct)"
+   },
+   {
+    "player": "Chiragdeep Singh",
+    "badges": [
+     "Gold Glove"
+    ],
+    "line": "4 dismissals in the tie and the 19-run win"
+   }
+  ],
+  "momentum": [
+   {
+    "player": "Arshdeep Singh",
+    "label": "Wickets",
+    "a": 4,
+    "b": 7,
+    "note": "econ 8.02 \u2192 6.02"
+   },
+   {
+    "player": "Mohamad Vahora",
+    "label": "Runs",
+    "a": 50,
+    "b": 151,
+    "note": "wkts 7 \u2192 13"
+   },
+   {
+    "player": "Sujaan Singh",
+    "label": "Wickets",
+    "a": 12,
+    "b": 18,
+    "note": "econ 5.46 \u2192 5.39"
+   },
+   {
+    "player": "Rowan Singh Sandhu",
+    "label": "Runs",
+    "a": 61,
+    "b": 122,
+    "note": ""
+   },
+   {
+    "player": "Chiragdeep Singh",
+    "label": "Runs",
+    "a": 27,
+    "b": 155,
+    "note": "SR 47 \u2192 89"
+   },
+   {
+    "player": "Pankaj Sharma",
+    "label": "Economy",
+    "a": 6.31,
+    "b": 5.28,
+    "lower": true,
+    "note": "lower is better"
+   },
+   {
+    "player": "Darshpreet Singh Sidhu",
+    "label": "Runs",
+    "a": 296,
+    "b": 101,
+    "note": "a dip to bounce back from"
+   }
+  ],
+  "phases": {
+   "note": "T20 games only (no over-by-over data is used for 30/40-over games). Innings with missing over summaries are left out.",
+   "cols": [
+    "Overs 1\u20136",
+    "Overs 7\u201315",
+    "Overs 16\u201320"
+   ],
+   "rows": [
+    {
+     "side": "Batting",
+     "scope": "All T20",
+     "n": [
+      15,
+      14,
+      14
+     ],
+     "rr": [
+      7.13,
+      7.21,
+      8.37
+     ],
+     "wk": [
+      1.93,
+      2.93,
+      2.29
+     ]
+    },
+    {
+     "side": "Bowling",
+     "scope": "All T20",
+     "n": [
+      14,
+      13,
+      13
+     ],
+     "rr": [
+      7.54,
+      6.64,
+      6.25
+     ],
+     "wk": [
+      1.79,
+      3.23,
+      2.85
+     ]
+    },
+    {
+     "side": "Batting",
+     "scope": "T20 knockouts",
+     "n": [
+      4,
+      4,
+      4
+     ],
+     "rr": [
+      7.42,
+      6.92,
+      9.18
+     ],
+     "wk": [
+      2.75,
+      2.25,
+      2.25
+     ]
+    },
+    {
+     "side": "Bowling",
+     "scope": "T20 knockouts",
+     "n": [
+      3,
+      2,
+      2
+     ],
+     "rr": [
+      9.11,
+      5.78,
+      9.68
+     ],
+     "wk": [
+      2.0,
+      2.0,
+      2.0
+     ]
+    }
+   ]
+  },
+  "bigTwo": {
+   "koRunsShare": 41.7
+  },
+  "pressure": [
+   {
+    "mid": 4391,
+    "stage": "DivX T20 quarter-final",
+    "opp": "Royal",
+    "at6": [
+     44,
+     2
+    ],
+    "total": "128/5 (16.4)",
+    "res": "W",
+    "result": "Won by 5 wkts"
+   },
+   {
+    "mid": 4400,
+    "stage": "DivX T20 semi-final",
+    "opp": "Montreal Legends",
+    "at6": [
+     62,
+     1
+    ],
+    "total": "227/4 (20)",
+    "res": "W",
+    "result": "Won by 115 runs"
+   },
+   {
+    "mid": 4434,
+    "stage": "DivX T20 final",
+    "opp": "Montreal Knight Riders",
+    "at6": [
+     49,
+     4
+    ],
+    "total": "131 all out (19.2)",
+    "res": "L",
+    "result": "Lost by 9 wkts"
+   },
+   {
+    "mid": 4410,
+    "stage": "Premier 40 semi-final",
+    "opp": "Montreal Mavericks",
+    "at6": [
+     52,
+     1
+    ],
+    "total": "136 all out (22.3)",
+    "res": "L",
+    "result": "Lost by 67 runs"
+   },
+   {
+    "mid": 4418,
+    "stage": "Premier T20 quarter-final",
+    "opp": "Montreal Legends",
+    "at6": [
+     23,
+     4
+    ],
+    "total": "68 all out (17.5)",
+    "res": "L",
+    "result": "Lost by 9 wkts"
+   }
+  ],
+  "challenges": [
+   {
+    "player": "Darshpreet Singh Sidhu",
+    "goal": "T20 strike rate 95+",
+    "base": "2026: T20 SR 89.7"
+   },
+   {
+    "player": "Arshdeep Singh",
+    "goal": "Economy under 6, all season",
+    "base": "2026: econ 6.63 (6.02 from August)"
+   },
+   {
+    "player": "Sujaan Singh",
+    "goal": "35 wickets",
+    "base": "2026: 30 wickets"
+   },
+   {
+    "player": "Pankaj Sharma",
+    "goal": "400 runs, 30 wickets, under 30 wides",
+    "base": "2026: 375 runs, 27 wkts, 47 wides"
+   },
+   {
+    "player": "Mohamad Vahora",
+    "goal": "Under 25 wides + the Div X T20 finisher role",
+    "base": "2026: 38 wides; DXT20 62 runs at SR 126.5"
+   },
+   {
+    "player": "Rowan Singh Sandhu",
+    "goal": "300 runs and a 2nd fifty",
+    "base": "2026: 183 runs, HS 50"
+   }
+  ]
  }
 };

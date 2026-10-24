@@ -24,7 +24,7 @@
 <header class="nav">
   <a class="brand" href="#top"><img class="crest" src="img/crest-128.png" width="48" height="48" alt="Punjab Lions crest"><span>Punjab Lions <em>CC</em></span></a>
   <nav>
-    <a href="#squad">The Lions</a><a href="#reel">Reel</a><a href="#moments">Moments</a><a href="#world">World stage</a><a href="#comps">Our teams</a><a href="#batting">Batting</a><a href="#bowling">Bowling</a><a href="#formats">T20 vs Long</a><a href="#knockouts">Grow next</a><a href="#recs">Next season</a>
+    <a href="#squad">The Lions</a><a href="#reel">Reel</a><a href="#moments">Moments</a><a href="#world">World stage</a><a href="#comps">Our teams</a><a href="#batting">Batting</a><a href="#bowling">Bowling</a><a href="#formats">T20 vs Long</a><a href="#knockouts">Road to 2027</a><a href="#recs">Next season</a>
   </nav>
 </header>
 
@@ -62,6 +62,8 @@
     <div class="pgrid" id="cards"></div>
     <div class="mgroup reveal">The rest of the pride</div>
     <div class="ptiles" id="tiles"></div>
+    <div class="mgroup reveal" id="awardsHead">Awards 2026</div>
+    <div class="awards" id="awards"></div>
     <p class="fine center" id="photoNote"></p>
   </div>
 </section>
@@ -82,9 +84,10 @@
   <canvas id="burst" aria-hidden="true"></canvas>
   <div class="wrap">
     <h2 class="reveal"><small>03</small>Season highlights<span class="grad">Lions Moments</span></h2>
-    <p class="sub reveal">Our ten best moments of 2026, from the CricClubs scorecards and ball-by-ball. Tap a moment for the story and the scorecard.</p>
+    <p class="sub reveal">Our ten best moments of 2026, each led by the Lion who made it happen, plus the fight we showed in the Final. From the CricClubs scorecards and ball-by-ball. Tap a moment for the story and the scorecard.</p>
     <div id="mFeature"></div>
     <div class="moments top" id="mTop"></div>
+    <div id="mFinal"></div>
     <div class="mgroup reveal">Honourable mentions</div><div class="moments hm" id="mHM"></div>
     <p class="fine center" id="mSrc"></p>
   </div>
@@ -154,29 +157,40 @@
 </section>
 
 <!-- KNOCKOUTS -->
-<section id="knockouts" class="sec ember chev-top">
+<section id="knockouts" class="sec ember chev-top road">
   <div class="wrap">
-    <h2 class="reveal"><small>09</small>Where we grow next</h2>
-    <p class="sub reveal">The honest part. Our three knockout exits all came after being bowled out: <b data-count="335">0</b> runs for <b data-count="30">0</b> wickets. Fix this and 2027 looks very different.</p>
-    <div class="ko-grid" id="koGrid"></div>
+    <h2 class="reveal"><small>09</small>Road to 2027<span class="grad">Built on 2026</span></h2>
+    <p class="sub reveal">We start from strength: <b data-count="19">0</b> wins, two semi-finals and a final. Here is what got us there, the six things that take us further, and a target for every one of them. Every number is from the 2026 CricClubs scorecards.</p>
+
+    <h3 class="rhead reveal"><i>01</i>What we did well</h3>
+    <div class="strengths" id="rStrengths"></div>
+
+    <div class="rrow">
+      <div class="panel reveal"><h3>Beyond the Big Two</h3><p class="note">Harsimran and Abhinav lead the way, and the rest of the squad did most of the work.</p><div class="split" id="rBig2"></div></div>
+      <div class="panel reveal"><h3>Momentum meter</h3><p class="note">First half (May&ndash;Jul) vs second half (Aug&ndash;Oct). Who is rising.</p><div class="mom" id="rMomentum"></div></div>
+    </div>
+
+    <h3 class="rhead reveal"><i>02</i>Rising Lions</h3>
+    <div class="carousel reveal" id="rRising"><button type="button" class="cbtn prev" aria-label="Previous Rising Lion">&#8249;</button><div class="ctrack" id="rTrack" tabindex="0" aria-label="Rising Lions badges, scroll sideways"></div><button type="button" class="cbtn next" aria-label="Next Rising Lion">&#8250;</button></div>
+
+    <div class="rrow">
+      <div class="panel reveal"><h3>Where the runs and wickets come</h3><div class="heat" id="rHeat"></div></div>
+      <div class="panel reveal"><h3>Knockout pressure meter</h3><p class="note">Our score after 6 overs in each of the 5 knockouts, and how it ended.</p><div class="press" id="rPress"></div></div>
+    </div>
+
+    <h3 class="rhead reveal"><i>03</i>Six goals for 2027</h3>
+    <div class="goals" id="rGoals"></div>
+
+    <div class="panel wide reveal tracker"><h3>2027 goal tracker</h3><p class="note">Each bar starts at our 2026 number; the flag is the 2027 target. It moves after every 2027 match.</p><div id="rTrack27"></div></div>
+
+    <h3 class="rhead reveal"><i>04</i>Your 2027 challenge</h3>
+    <div class="chall" id="rChall"></div>
+
     <details class="panel wide reveal fowp" id="fowDetails"><summary><h3>How the wickets fell in the three knockout losses</h3><span class="more">Show the breakdown <i>+</i></span></summary>
       <p class="note" id="fowPattern"></p>
       <div class="fow-grid" id="fowGrid"></div>
     </details>
-    <div class="chart-row">
-      <div class="panel reveal"><h3>Innings bowled out, by competition</h3><div class="chart-box"><canvas id="alloutChart"></canvas></div><p class="note">11 of 31 innings &mdash; a habit all season, not just in knockouts.</p></div>
-      <div class="panel reveal"><h3>What to work on</h3>
-        <ul class="lacks">
-          <li><b>10 ducks</b> in the DivX 30-over (bowled out for 75 and 76) and <b>10 ducks</b> in the Premier T20.</li>
-          <li><b>Wides:</b> 89 in 156.2 Premier T20 overs = <b>0.57 an over</b> (about 10 a game). Other competitions 0.47&ndash;0.49.</li>
-          <li><b>T20 bowling depth:</b> economy 6.74 (Premier T20) and 6.94 (DivX T20). After the top three, only 22 Premier T20 wickets from everyone else.</li>
-          <li><b>DivX 30-over run rate:</b> economy 5.97 vs 4.80 in the Premier 40 &rarr; NRR &minus;0.072.</li>
-          <li><b>Long-format results:</b> both Premier 40 league losses came defending (222/7, 146/9); every DivX 30 chase that failed fell short.</li>
-          <li><b>Stretched squad:</b> about 20 players across four teams; on 12 Sept both long-format sides played and both lost.</li>
-        </ul>
-      </div>
-    </div>
-    <div class="panel wide reveal"><h3>Wides per over, by competition</h3><div class="chart-box short"><canvas id="widesChart"></canvas></div></div>
+    <p class="fine center" id="rSrc"></p>
   </div>
 </section>
 
