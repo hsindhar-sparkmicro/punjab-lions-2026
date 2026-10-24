@@ -139,9 +139,8 @@ rest.forEach((p,i)=>{const c=el('button','ptile pop');c.type='button';c.dataset.
 /* hero faces */
 const faces=$('#faces');[...KEY,...rest.map(p=>p.name)].filter(n=>P.players[n]).slice(0,14).forEach(n=>{const b=el('button','hface');b.type='button';b.dataset.open='player:'+n;b.title=disp(n);b.setAttribute('aria-label',disp(n)+': open stats');b.innerHTML=`<img src="${P.players[n]}" alt="">`;faces.appendChild(b)});
 {const a=el('a','hface more-f','<span>Meet the<br>squad</span>');a.href='#squad';faces.appendChild(a)}
-/* ---------- HERO: one floating FUT-style card (random player, new one every 7 s) ---------- */
-(function(){
- const host=$('.hero-inner'),crest=$('.hero-crest>img');if(!host||!crest)return;
+/* ---------- FUT-style card helpers: shared by the hero card and the player detail window ---------- */
+const FUT=(()=>{
  const PH=new Set(['Lakhwinder Singh','Jashan Lubana','Sarvpreet Guru']); // poor / missing photos -> crest + initials art
  const POS={'All Rounder':'AR','Batter':'BAT','Bowler':'BWL','Wicket Keeper':'WK'};
  const pool=D.season.filter(p=>p.mat>0).map(p=>p.name);
@@ -167,27 +166,41 @@ const faces=$('#faces');[...KEY,...rest.map(p=>p.name)].filter(n=>P.players[n]).
    return a.slice(0,6)}
  const cname=n=>{const w=disp(n).split(' ');return w.length>2?w[0]+' '+w.slice(1,-1).map(x=>x[0]+'.').join(' ')+' '+w[w.length-1]:w.join(' ')};
  const art=n=>(!PH.has(n)&&P.players[n])?`<img class="fut-photo" src="${P.players[n]}" alt="" decoding="async">`:`<span class="fut-photo fut-ph" aria-hidden="true"><img src="img/crest-128.png" alt=""><b>${ini(n)}</b></span>`;
+ /* card face markup; full=true -> all 6 attribute lines (detail window) */
+ const face=(n,full)=>{const p=S(n),r=rating(p),role=(D.players[n]||{}).role||'',pos=POS[role]||'';
+   return `<span class="fut-top"><span class="fut-ovr">${r}</span>${pos?`<span class="fut-pos">${pos}</span>`:''}<img class="fut-club" src="img/crest-128.png" alt=""></span>
+     <span class="fut-art">${art(n)}</span><span class="fut-name${cname(n).length>18?' xl':cname(n).length>15?' l':''}">${esc(cname(n))}</span>
+     <span class="fut-attrs">${attrs(p).map(([k,v])=>`<span><b>${v}</b><i>${k}</i></span>`).join('')}</span><span class="fut-shine"></span>`};
+ return {PH,POS,pool,slug,cl,f1,rating,attrs,cname,art,face};
+})();
+/* ---------- HERO: one floating FUT-style card (random player, new one every 7 s) ---------- */
+(function(){
+ const host=$('.hero-inner'),crest=$('.hero-crest>img');if(!host||!crest)return;
+ const {PH,POS,pool,slug,cl,rating,attrs,face}=FUT;
  const btn=el('button','fut');btn.type='button';btn.setAttribute('aria-haspopup','dialog');
  btn.innerHTML='<span class="fut-float"><span class="fut-tilt"><span class="fut-card"></span></span></span>';host.appendChild(btn);
  const card=btn.querySelector('.fut-card'),tilt=btn.querySelector('.fut-tilt');
  // preload portraits so a swap never shows a half-loaded image
  pool.forEach(n=>{if(!PH.has(n)&&P.players[n]){const i=new Image();i.src=P.players[n]}});
- function fill(n){const p=S(n),r=rating(p),role=(D.players[n]||{}).role||'',pos=POS[role]||'';
+ function fill(n){const r=rating(S(n)),role=(D.players[n]||{}).role||'';
    btn.dataset.open='player:'+n;btn.dataset.fut=slug(n);
    btn.setAttribute('aria-label',`Featured Lion: ${disp(n)}, rating ${r}${role?', '+role:''}. Open 2026 stats`);
-   card.innerHTML=`<span class="fut-top"><span class="fut-ovr">${r}</span>${pos?`<span class="fut-pos">${pos}</span>`:''}<img class="fut-club" src="img/crest-128.png" alt=""></span>
-     <span class="fut-art">${art(n)}</span><span class="fut-name">${esc(cname(n))}</span>
-     <span class="fut-attrs">${attrs(p).map(([k,v])=>`<span><b>${v}</b><i>${k}</i></span>`).join('')}</span><span class="fut-shine"></span>`}
- /* placement: off the crest's lower-right shoulder (desktop) / beside the crest (phones); layout offsets only, so
-    the crest's float and the reveal transforms never move it */
+   card.innerHTML=face(n)}
+ /* placement: phones -> beside the crest (unchanged); tablets + desktops -> hovering over the shield's lower-left,
+    toward the page centre, never over the hero copy (text runs + buttons), the face circles or the stats strip.
+    Layout offsets only, so the crest's float and the reveal transforms never move it */
+ const copyR=()=>{let r=0;const c=$('#top .hero-copy');if(!c)return 0;const tw=document.createTreeWalker(c,NodeFilter.SHOW_TEXT);let tn;
+   while(tn=tw.nextNode()){if(!tn.nodeValue.trim())continue;const g=document.createRange();g.selectNodeContents(tn);for(const q of g.getClientRects())r=Math.max(r,q.right)}
+   c.querySelectorAll('a,button').forEach(b=>{const q=b.getBoundingClientRect();if(q.width)r=Math.max(r,q.right)});return r};
  function place(){let x=0,y=0,e=crest;while(e&&e!==host){x+=e.offsetLeft;y+=e.offsetTop;e=e.offsetParent}
    const cw=crest.offsetWidth,mob=matchMedia("(max-width:760px)").matches,hr=host.getBoundingClientRect(),maxR=hr.width+(innerWidth-hr.right)-10;let w,l,t;
    let off=false;
    if(mob){l=x+cw*.9;w=cl(maxR-l,84,100);t=y+cw*.2;l=Math.min(l,maxR-w)}
-   else{l=x+cw*.84;w=cl(maxR-l,120,190);t=y+cw*.66;
-     if(l+w>maxR)off=true} // tablets / narrow desktops: no room beside the shield without covering crest or motto -> no card
-   {const fc=$('#faces'),lc=fc&&fc.lastElementChild;if(lc&&l<fc.offsetLeft+lc.offsetLeft+lc.offsetWidth&&fc.offsetParent===host)t=Math.min(t,fc.offsetTop-w*262/184-6)} // never sit on the face circles
-   hidden=off;btn.hidden=off;btn.classList.toggle('compact',mob);btn.style.cssText=`left:${l.toFixed(1)}px;top:${t.toFixed(1)}px;width:${w.toFixed(1)}px;font-size:${(w/184*16).toFixed(2)}px`}
+   else{const tr=copyR()-hr.left+18;w=cl(cw*.47,112,200);l=Math.max(x-cw*.04,tr);t=y+cw*.58-w*131/184;
+     if(l+w>Math.min(maxR,x+cw))off=true} // no room over the shield without touching the copy -> no card
+   {const fc=$('#faces'),lc=fc&&fc.lastElementChild;if(lc&&l<fc.offsetLeft+lc.offsetLeft+lc.offsetWidth&&fc.offsetParent===host)t=Math.min(t,fc.offsetTop-w*262/184-8)} // never sit on the face circles
+   if(!mob&&t<y-cw*.08)off=true;
+   hidden=off;btn.hidden=off;btn.classList.toggle('compact',mob||w<150);btn.classList.toggle('tabc',!mob&&w<150);btn.style.cssText=`left:${l.toFixed(1)}px;top:${t.toFixed(1)}px;width:${w.toFixed(1)}px;font-size:${(w/184*16).toFixed(2)}px`}
  const q=new URLSearchParams(location.search).get('fut'),want=q&&pool.find(n=>slug(n)===slug(q)||n===q);
  /* own random source, so the rest of the page's Math.random sequence is untouched */
  const rndI=n=>{try{return crypto.getRandomValues(new Uint32Array(1))[0]%n}catch(e){return Math.floor(Math.random()*n)}};
@@ -242,17 +255,35 @@ const faces=$('#faces');[...KEY,...rest.map(p=>p.name)].filter(n=>P.players[n]).
  $('#photoNote').innerHTML=`Player photos: CricClubs profile pictures; the crest stands in where there is none. &ldquo;Matches&rdquo; is the sum of CricClubs Mat columns and may include abandoned games.`}
 /* player modal: batting / bowling / fielding per competition */
 const CL=k=>D.comps.find(c=>c.key===k).label;
-builders.player=n=>{const pc=(D.pcomp||{})[n]||{},m=D.players[n]||{},ks=D.comps.map(c=>c.key).filter(k=>pc[k]);
-  const T=(title,cols,get)=>{const rows=ks.filter(k=>pc[k][get]);if(!rows.length)return '';return `<h4>${title}</h4><div class="table-scroll"><table class="stbl"><thead><tr><th>Competition</th>${cols.map(c=>`<th>${c[0]}</th>`).join('')}</tr></thead><tbody>${rows.map(k=>`<tr><td>${CL(k)}</td>${cols.map(c=>`<td>${c[1](pc[k][get])??'–'}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`};
-  const v=x=>x==null||x===''?'–':x;
+/* player detail window = a FUT-style card (same rating() / attrs() as the hero card) + the full 2026 stats, FUT-style */
+builders.player=n=>{const pc=(D.pcomp||{})[n]||{},m=D.players[n]||{},ks=D.comps.map(c=>c.key).filter(k=>pc[k]),p=S(n);
+  const v=x=>x==null||x===''?'–':x,num=x=>{const f=parseFloat(x);return isFinite(f)?f:0};
+  const sum=(get,f)=>ks.reduce((a,k)=>a+(pc[k][get]?num(pc[k][get][f]):0),0),has=get=>ks.some(k=>pc[k][get]);
+  const T=(title,cols,get)=>{const rows=ks.filter(k=>pc[k][get]);if(!rows.length)return '';return `<div class="fby"><h5>${title}</h5><div class="table-scroll"><table class="stbl futbl"><thead><tr><th>Competition</th>${cols.map(c=>`<th>${c[0]}</th>`).join('')}</tr></thead><tbody>${rows.map(k=>`<tr><td>${CL(k)}</td>${cols.map(c=>`<td>${c[1](pc[k][get])??'–'}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`};
   const bat=T('Batting',[['Mat',b=>v(b.Mat)],['Inns',b=>v(b.Ins)],['NO',b=>v(b.No)],['Runs',b=>v(b.Runs)],['Balls',b=>v(b.Balls)],['HS',b=>v(b.Hs)],['Avg',b=>v(b.Avg)],['SR',b=>v(b.Sr)],['50s',b=>v(b['50s'])],['4s',b=>v(b['4s'])],['6s',b=>v(b['6s'])]],'bat');
   const bowl=T('Bowling',[['Mat',b=>v(b.Mat)],['Inns',b=>v(b.Inns)],['Overs',b=>v(b.Overs)],['Mdns',b=>v(b.Mdns)],['Runs',b=>v(b.Runs)],['Wkts',b=>v(b.Wkts)],['Econ',b=>v(b.Econ)],['Avg',b=>v(b.Ave)],['SR',b=>v(b.SR)],['Wides',b=>v(b.Wides)]],'bowl');
   const fld=T('Fielding',[['Catches',f=>v(f.Catches)],['WK catches',f=>v(f['WK Catches'])],['Run outs (direct)',f=>v(f['Direct RO'])],['Run outs (indirect)',f=>v(f['Indirect RO'])],['Stumpings',f=>v(f.Stumpings)],['Total',f=>v(f.Total)]],'field');
   const by=worldOf(n).map(w=>({url:w.url||'#canada',img:w.img,caption:w.title+(w.sub?' - '+w.sub:''),meta:w.date?fmtDate(w.date)+' · Instagram ↗':'Lions on the world stage ↓',ext:!!w.url}));
-  return `<div class="mdplayer"><div class="mdface">${photo(n)}</div><div><span class="fmt">${esc(roleOf(n))}</span><h3 id="mdTitle" class="mdh">${esc(disp(n))}</h3><p class="one">${headline(n)} <span class="muted">· whole season</span></p>
-   ${m.url?`<a class="btn ghost sm" href="${m.url}" target="_blank" rel="noopener">CricClubs profile ↗</a>`:''}${VIDS.filter(v=>v.who===n).map(v=>`<a class="btn gold sm watch" href="#reel" data-play="${v.id}">${esc(v.label||'Watch the clip')} ▶</a>`).join('')}
-   ${by.length?`<div class="mdbeyond">${by.map(x=>`<a href="${x.url}"${x.ext?' target="_blank" rel="noopener"':''}><img src="${x.img}" alt="${esc(x.caption)}"><span>${esc(x.caption.split(' - ')[0])}<em>${x.meta}</em></span></a>`).join('')}</div>`:''}</div></div>
-   ${bat}${bowl}${fld}${ks.length?'':'<p class="note">No 2026 records in the CricClubs tables.</p>'}<p class="fine">Source: CricClubs 2026 batting, bowling and fielding tables per competition.</p>`};
+  /* season tiles: CricClubs season totals from data.js; 50s / maidens / fielding columns are sums of the per-competition rows below */
+  const tile=(k,val,hot)=>`<span class="ftile${hot?' hot':''}"><b>${val==null||val===''||(typeof val==='number'&&!isFinite(val))?'–':val}</b><i>${k}</i></span>`;
+  const panel=(t,big,tiles)=>`<section class="fpanel fp-${t.toLowerCase()}"><header><h4>${t}</h4>${big}</header><div class="ftiles">${tiles.join('')}</div></section>`;
+  let panels='';
+  if(p){const F=FUT.f1,ov=b=>`${Math.floor(b/6)}${b%6?'.'+b%6:''}`;
+    panels+=panel('Batting',`<span class="fbig"><b>${p.runs}</b><i>runs</i></span>`,[tile('Mat',p.mat),tile('Inns',p.ins),tile('NO',p.no),tile('Runs',p.runs,1),tile('Balls',p.balls),tile('HS',p.ins?p.hs:null),tile('Avg',p.avg!=null?F(p.avg):null,1),tile('SR',p.sr!=null?F(p.sr):null,1),tile('50s',has('bat')?sum('bat','50s'):null),tile('4s',p.fours),tile('6s',p.sixes)]);
+    if(p.bb>0)panels+=panel('Bowling',`<span class="fbig"><b>${p.wk}</b><i>wickets</i></span>`,[tile('Overs',ov(p.bb)),tile('Mdns',has('bowl')?sum('bowl','Mdns'):null),tile('Runs',p.rc),tile('Wkts',p.wk,1),tile('Econ',p.econ!=null?p.econ.toFixed(2):null,1),tile('Avg',p.wk&&p.bavg!=null?F(p.bavg):null,1),tile('SR',p.wk?F(p.bb/p.wk):null),tile('Wides',p.wides)]);
+    else panels+=panel('Bowling','',['<p class="fnone">No bowling in the 2026 CricClubs tables.</p>']);
+    panels+=has('field')?panel('Fielding',`<span class="fbig"><b>${p.dis}</b><i>dismissals</i></span>`,[tile('Catches',sum('field','Catches'),1),tile('WK catches',sum('field','WK Catches')),tile('Run outs',sum('field','Direct RO')+sum('field','Indirect RO')),tile('Stumpings',sum('field','Stumpings')),tile('Total',sum('field','Total'),1)])
+      :panel('Fielding',`<span class="fbig"><b>${p.dis}</b><i>dismissals</i></span>`,[])}
+  const r=p?FUT.rating(p):null,watch=VIDS.filter(x=>x.who===n);
+  return `<div class="mdfut"><div class="mdfut-card">${p?`<span class="fut fut-detail" role="img" aria-label="${esc(disp(n))} player card: rating ${r}${m.role?', '+esc(m.role):''}"><span class="fut-tilt"><span class="fut-card">${FUT.face(n)}</span></span></span>`:`<div class="mdface">${photo(n)}</div>`}</div>
+   <div class="mdfut-info"><span class="fmt">${esc(roleOf(n))}</span><h3 id="mdTitle" class="mdh">${esc(disp(n))}</h3>
+    ${p?`<div class="fratings"><span class="fr"><b>${r}</b><i>Lions rating</i></span>${m.role?`<span class="fr"><b>${FUT.POS[m.role]||'–'}</b><i>${esc(m.role)}</i></span>`:''}<span class="fr"><b>${p.mat}</b><i>matches</i></span></div>`:''}
+    <p class="one">${headline(n)} <span class="muted">· whole season</span></p>
+    <div class="mdbtns">${m.url?`<a class="btn ghost sm" href="${m.url}" target="_blank" rel="noopener">CricClubs profile ↗</a>`:''}${watch.map(x=>`<a class="btn gold sm watch" href="#reel" data-play="${x.id}">${esc(x.label||'Watch the clip')} ▶</a>`).join('')}</div>
+    ${by.length?`<div class="mdbeyond">${by.map(x=>`<a href="${x.url}"${x.ext?' target="_blank" rel="noopener"':''}><img src="${x.img}" alt="${esc(x.caption)}"><span>${esc(x.caption.split(' - ')[0])}<em>${x.meta}</em></span></a>`).join('')}</div>`:''}</div></div>
+   ${p?`<h4 class="fsec">2026 season</h4><div class="fpanels">${panels}</div>`:''}
+   ${ks.length?`<h4 class="fsec">By competition</h4>${bat}${bowl}${fld}`:'<p class="note">No 2026 records in the CricClubs tables.</p>'}
+   <p class="fine">Source: CricClubs 2026 batting, bowling and fielding tables per competition. Lions rating: the same formula as the hero card (season runs, strike rate, wickets, economy, dismissals, matches).</p>`};
 
 /* ---------- FORMATS ---------- */
 const C=k=>D.comps.find(c=>c.key===k);

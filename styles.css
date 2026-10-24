@@ -550,8 +550,61 @@ html.static .modal{position:fixed}
 .fut.compact .fut-attrs span:nth-child(n+5){display:none}
 .fut.compact .fut-attrs{top:69%;row-gap:.3em}.fut.compact .fut-attrs b{font-size:1.05em}.fut.compact .fut-attrs i{font-size:.75em}
 .fut.compact .fut-name{font-size:1.12em}
+.fut-name.l{font-size:.92em}.fut-name.xl{font-size:.8em}.fut.compact .fut-name.l{font-size:1em}.fut.compact .fut-name.xl{font-size:.86em}
 html.static .fut-float,html.static .fut-shine{animation:none}html.static .fut-shine{display:none}html.static .fut-tilt{transition:none}
 @media (prefers-reduced-motion:reduce){.fut-float,.fut-shine{animation:none}.fut-shine{display:none}.fut-tilt{transition:none}}
 
 .fut[hidden]{display:none!important}
 .mdplayer .watch{margin-left:8px}
+/* ---- player detail window as a FUT-style card (preview) ---- */
+.mbox.m-player{width:min(1040px,100%);background:radial-gradient(120% 70% at 15% 0%,rgba(245,180,33,.16),transparent 60%),linear-gradient(165deg,#17120a,#070605 60%)}
+.m-player>.mclose{position:sticky;top:0;float:right;margin:-14px -14px 0 0}
+.mdfut{display:grid;grid-template-columns:260px 1fr;gap:30px;align-items:center}
+.mdfut-card{display:flex;justify-content:center}
+.fut.fut-detail{position:relative;display:block;width:260px;font-size:22.6px;cursor:default}
+.fut-detail .fut-tilt{animation:futin .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes futin{from{opacity:0;transform:rotateY(-80deg) scale(.86)}to{opacity:1;transform:none}}
+html.static .fut-detail .fut-tilt{animation:none}
+@media (prefers-reduced-motion:reduce){.fut-detail .fut-tilt{animation:none}}
+.mdfut-info .mdh{margin-top:4px}
+.fratings{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 12px}
+.fr{display:flex;flex-direction:column;align-items:center;min-width:78px;padding:8px 12px 7px;background:linear-gradient(180deg,rgba(255,199,44,.14),rgba(0,0,0,.35));border:1px solid rgba(255,199,44,.4);clip-path:polygon(0 0,100% 0,100% 78%,88% 100%,12% 100%,0 78%)}
+.fr b{font:400 30px/1 var(--fd);background:var(--gradv);-webkit-background-clip:text;background-clip:text;color:transparent}
+.fr i{font:700 9.5px/1.2 var(--fb);font-style:normal;letter-spacing:.12em;text-transform:uppercase;color:#FFE7A6;margin-top:3px;text-align:center}
+.mdbtns{display:flex;gap:10px;flex-wrap:wrap}
+.mdbtns .watch{margin-left:0}
+.m-player .mdbeyond a{background:rgba(245,180,33,.08);border-color:rgba(255,199,44,.3)}
+.m-player h4.fsec{clear:both;display:flex;align-items:center;gap:12px;margin:28px 0 12px;font-size:20px}
+.m-player h4.fsec::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(255,199,44,.6),transparent)}
+.fpanels{display:grid;grid-template-columns:1.55fr 1.1fr .85fr;gap:14px;align-items:start}
+.fnone{grid-column:1/-1;margin:0;font-size:13px;color:var(--muted)}
+.fp-batting .ftiles{grid-template-columns:repeat(6,1fr)}.fp-bowling .ftiles{grid-template-columns:repeat(4,1fr)}.fp-fielding .ftiles{grid-template-columns:repeat(3,1fr)}
+.fpanel{position:relative;padding:14px 14px 16px;background:linear-gradient(170deg,rgba(255,199,44,.1),rgba(0,0,0,.45) 55%);border:1px solid rgba(255,199,44,.35);border-radius:4px 4px 14px 14px}
+.fpanel::before{content:"";position:absolute;left:14px;right:14px;top:-1px;height:3px;background:var(--grad)}
+.fpanel header{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
+.fpanel h4{margin:0!important;font-size:17px!important}
+.fbig{display:flex;align-items:baseline;gap:6px}
+.fbig b{font:400 34px/1 var(--fd);background:var(--gradv);-webkit-background-clip:text;background-clip:text;color:transparent}
+.fbig i{font:700 10px/1 var(--fb);font-style:normal;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.ftiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:6px}
+.ftile{display:flex;flex-direction:column;align-items:center;padding:7px 4px 6px;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.07);border-radius:8px}
+.ftile b{font:600 19px/1.1 var(--fh);color:#FFF6DC;font-variant-numeric:tabular-nums}
+.ftile i{font:700 9px/1.2 var(--fb);font-style:normal;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-top:2px;text-align:center}
+.ftile.hot{border-color:rgba(255,199,44,.45);background:linear-gradient(180deg,rgba(255,199,44,.16),rgba(0,0,0,.45))}
+.ftile.hot b{background:var(--gradv);-webkit-background-clip:text;background-clip:text;color:transparent}
+.fby{margin-bottom:14px;border:1px solid rgba(255,199,44,.25);border-radius:12px;overflow:hidden;background:rgba(0,0,0,.35)}
+.fby h5{margin:0;padding:8px 12px;font:600 13px/1 var(--fh);letter-spacing:.14em;text-transform:uppercase;color:#111;background:var(--grad)}
+.futbl th{color:#FFE7A6;background:rgba(255,199,44,.07)}
+.futbl tbody tr:nth-child(even) td{background:rgba(255,255,255,.025)}
+.futbl td:first-child{color:var(--gold)!important}
+@media (max-width:1100px){.fpanels{grid-template-columns:1fr 1fr}.fpanels .fpanel:first-child{grid-column:1/-1}}
+@media (max-width:760px){
+ .mdfut{grid-template-columns:1fr;gap:16px;text-align:center}
+ .fut.fut-detail{width:200px;font-size:17.4px}
+ .mdfut-info .fratings,.mdbtns,.m-player .mdbeyond{justify-content:center}
+ .m-player .mdbeyond a{text-align:left}
+ .fpanels{grid-template-columns:1fr}
+ .fp-batting .ftiles,.fp-bowling .ftiles{grid-template-columns:repeat(4,1fr)}
+ .m-player>.mclose{margin:-8px -4px 0 0}
+}
+.fut.tabc .fut-attrs{left:8%;right:8%;column-gap:.5em}
