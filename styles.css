@@ -40,9 +40,9 @@ h1 .grad{filter:drop-shadow(0 0 22px rgba(245,180,33,.35))}
 .tagline{font:600 clamp(18px,2vw,24px)/1.3 var(--fh);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px;color:#fff}
 .lede{font-size:clamp(16px,1.6vw,19px);max-width:600px;color:#e8dfc6;margin:0}
 .hero-crest{text-align:center;position:relative}
-.hero-crest .hc-img{width:100%;max-width:400px;height:auto;filter:drop-shadow(0 0 40px rgba(245,180,33,.45));animation:float 6s ease-in-out infinite}
+.hero-crest img{width:100%;max-width:400px;height:auto;filter:drop-shadow(0 0 40px rgba(245,180,33,.45));animation:float 6s ease-in-out infinite}
 @keyframes float{50%{transform:translateY(-10px)}}
-html.static .hero-crest .hc-img{animation:none}
+html.static .hero-crest img{animation:none}
 .motto{font:600 13px/1 var(--fb);letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin:6px 0 0}
 .counters{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:1100px}
 .ctr{background:linear-gradient(180deg,rgba(255,199,44,.07),rgba(0,0,0,.5));border:1px solid rgba(255,199,44,.18);border-left:4px solid var(--gold);border-radius:14px;padding:16px 18px;backdrop-filter:blur(2px)}
@@ -235,7 +235,7 @@ html.static .reveal,html.static .pop,html.static .flipin,html.static .card,html.
  .wrap{padding:0 16px}
  .hero-inner{padding:28px 16px 70px}
  .hero-grid{grid-template-columns:1fr;gap:0}
- .hero-crest{order:-1}.hero-crest .hc-img{max-width:220px}.hero-crest{margin-bottom:22px}.motto{font-size:11px}
+ .hero-crest{order:-1}.hero-crest img{max-width:220px}.hero-crest{margin-bottom:22px}.motto{font-size:11px}
  .hero-glow{right:auto;left:50%;margin-left:-200px;top:0;width:400px;height:400px}
  .counters{grid-template-columns:repeat(2,1fr);gap:10px}
  .ctr{padding:12px 14px}
@@ -515,34 +515,40 @@ html.static .modal{position:fixed}
  .vcard{flex:0 0 62%;scroll-snap-align:start}.vcard.wide{flex-basis:88%;order:-1;display:flex}.vcard.wide .vplay{aspect-ratio:16/10;min-height:0}
  .wbody{padding:22px}.wrow{grid-template-columns:1fr}.witem>img{aspect-ratio:4/3}
 }
-
-/* ---- hero squad orbit (preview) ---- */
-.hero-crest{min-width:0}
-.orbit{position:relative;isolation:isolate}
-.orbit .hc-img{position:relative;z-index:10;display:block;margin:0 auto}
-.orbit-track{position:absolute;inset:0;z-index:auto}
-.ocard{position:absolute;left:0;top:0;width:84px;padding:0;border:0;background:none;color:inherit;cursor:pointer;will-change:transform,opacity;-webkit-tap-highlight-color:transparent}
-.oc-in{display:block;padding:4px 4px 7px;border-radius:12px;background:linear-gradient(180deg,#17130a,#050505);border:1px solid rgba(255,199,44,.55);box-shadow:0 10px 24px rgba(0,0,0,.6),inset 0 0 0 1px rgba(0,0,0,.6);text-align:center;transition:transform .2s,border-color .2s,box-shadow .2s}
-.oc-face{display:block;position:relative;width:100%;aspect-ratio:1;border-radius:9px;overflow:hidden;background:#111}
-.oc-face>img,.oc-face>.ph-face{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 22%}
-.oc-face::after{content:"";position:absolute;inset:0;border-radius:9px;box-shadow:inset 0 0 0 1px rgba(255,210,63,.25);pointer-events:none}
-.oc-ph{gap:0}.oc-ph img{position:absolute;width:70%;max-width:none;opacity:.22;left:15%;top:15%}.oc-ph b{position:relative;font-size:28px;margin:0;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-.oc-name{display:block;margin-top:5px;font:600 10.5px/1.15 var(--fh);letter-spacing:.01em;text-transform:uppercase;color:#FFF6DC;overflow-wrap:anywhere}
-.oc-role{display:block;margin-top:2px;font:600 8.5px/1.1 var(--fb);letter-spacing:.03em;white-space:nowrap;text-transform:uppercase;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-.ocard:hover .oc-in,.ocard:focus-visible .oc-in{transform:scale(1.1);border-color:var(--gold);box-shadow:0 0 0 2px var(--gold),0 0 26px rgba(255,199,44,.5)}
-.ocard:focus{outline:none}.ocard:hover,.ocard:focus-visible{z-index:60!important;opacity:1!important}
-/* ring (desktop) */
-.orbit.ring{height:540px;margin:0 -10px}
-.orbit.ring .hc-img{max-width:330px;padding-top:40px}
-/* row (phones / narrow): a single row that loops under the crest */
-.orbit.row .hc-img{max-width:140px}
-.orbit.row .orbit-track{position:relative;inset:auto;margin:-26px -16px 0;overflow:hidden;z-index:11;-webkit-mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
-.oc-row{display:flex;align-items:flex-start;gap:10px;width:max-content;padding:12px 10px 10px;animation:ocrow 70s linear infinite}
-.orbit.row .ocard{position:relative;flex:none;width:86px}
-.orbit.hold .oc-row,.orbit.off .oc-row,.orbit.row .orbit-track:hover .oc-row{animation-play-state:paused}
-@keyframes ocrow{to{transform:translate3d(-50%,0,0)}}
-.orbit.row.still .orbit-track{overflow-x:auto;scroll-snap-type:x proximity;scroll-padding:0 16px;scrollbar-width:none;-webkit-mask:none;mask:none}
-.orbit.row.still .orbit-track::-webkit-scrollbar{display:none}
-.orbit.row.still .oc-row{animation:none;padding-left:16px;padding-right:16px}.orbit.row.still .ocard{scroll-snap-align:start}
-@media (min-width:760px) and (max-width:1199px){.orbit.row .orbit-track{margin:-26px 0 0}}
-@media (prefers-reduced-motion:reduce){.orbit .hc-img{animation:none}.oc-row{animation:none}.oc-in{transition:none}}
+/* ---- hero FUT-style featured player card (preview) ---- */
+.fut{position:absolute;z-index:4;padding:0;border:0;background:none;color:inherit;cursor:pointer;perspective:700px;font-size:16px;-webkit-tap-highlight-color:transparent;text-align:left}
+.fut:focus{outline:none}
+.fut-float{display:block;animation:futfloat 5.5s ease-in-out infinite}
+@keyframes futfloat{50%{transform:translateY(-7px)}}
+.fut.paused .fut-float{animation-play-state:paused}
+.fut-tilt{display:block;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .25s ease-out;transform-style:preserve-3d;filter:drop-shadow(0 14px 22px rgba(0,0,0,.7)) drop-shadow(0 0 16px rgba(245,180,33,.28))}
+.fut:hover .fut-tilt,.fut:focus-visible .fut-tilt{filter:drop-shadow(0 14px 22px rgba(0,0,0,.7)) drop-shadow(0 0 22px rgba(255,199,44,.6))}
+.fut:focus-visible .fut-card{outline:.18em solid #fff;outline-offset:-.5em}
+.fut-card{position:relative;display:block;aspect-ratio:184/262;padding:.12em;overflow:hidden;
+ clip-path:polygon(0 7%,9% 0,91% 0,100% 7%,100% 89%,50% 100%,0 89%);background:linear-gradient(150deg,#FFE27A 0%,#F5B421 40%,#E8833A 75%,#8a5a12 100%)}
+.fut-card::before{content:"";position:absolute;inset:.16em;clip-path:polygon(0 7%,9% 0,91% 0,100% 7%,100% 89%,50% 100%,0 89%);
+ background:radial-gradient(120% 70% at 70% 20%,rgba(245,180,33,.32),transparent 60%),linear-gradient(180deg,#1b150a 0%,#0a0805 55%,#050505 100%)}
+.fut-card>*{position:absolute}
+.fut-top{left:9%;top:9%;z-index:3;display:flex;flex-direction:column;align-items:center;width:24%}
+.fut-ovr{font:400 2.7em/0.9 var(--fd);background:var(--gradv);-webkit-background-clip:text;background-clip:text;color:transparent}
+.fut-pos{margin-top:.15em;font:700 .78em/1 var(--fh);letter-spacing:.08em;color:#FFE7A6}
+.fut-club{width:1.9em;height:1.9em;margin-top:.45em;object-fit:contain;filter:drop-shadow(0 0 4px rgba(255,199,44,.5))}
+.fut-art{right:5%;top:6%;width:70%;height:50%;z-index:2}
+.fut-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 18%;
+ -webkit-mask:radial-gradient(ellipse 50% 50% at 50% 48%,#000 52%,transparent 96%);mask:radial-gradient(ellipse 50% 50% at 50% 48%,#000 52%,transparent 96%)}
+.fut-ph{display:flex;align-items:center;justify-content:center;-webkit-mask:none;mask:none}
+.fut-ph img{position:absolute;width:78%;left:11%;top:8%;opacity:.3}
+.fut-ph b{position:relative;font:400 3.2em/1 var(--fd);letter-spacing:.04em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 6px #000)}
+.fut-name{left:6%;right:6%;top:57.5%;z-index:3;text-align:center;font:600 1.02em/1.1 var(--fh);letter-spacing:.04em;text-transform:uppercase;color:#FFF6DC;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+ padding-bottom:.28em;border-bottom:1px solid rgba(255,199,44,.55)}
+.fut-attrs{left:11%;right:11%;top:67.5%;z-index:3;display:grid;grid-template-columns:1fr 1fr;column-gap:.7em;row-gap:.18em}
+.fut-attrs span{display:flex;align-items:baseline;gap:.3em;white-space:nowrap}
+.fut-attrs b{font:600 .95em/1.15 var(--fh);color:#FFE7A6;min-width:1.9em;text-align:right}
+.fut-attrs i{font:600 .62em/1 var(--fb);font-style:normal;letter-spacing:.08em;color:var(--gold)}
+.fut-shine{inset:0;z-index:4;pointer-events:none;background:linear-gradient(105deg,transparent 35%,rgba(255,246,220,.38) 48%,rgba(255,246,220,.08) 54%,transparent 62%);transform:translateX(-120%);animation:futshine 6s ease-in-out 1.2s infinite}
+@keyframes futshine{0%{transform:translateX(-120%)}28%,100%{transform:translateX(120%)}}
+.fut.compact .fut-attrs span:nth-child(n+5){display:none}
+.fut.compact .fut-attrs{top:69%;row-gap:.3em}.fut.compact .fut-attrs b{font-size:1.05em}.fut.compact .fut-attrs i{font-size:.75em}
+.fut.compact .fut-name{font-size:1.12em}
+html.static .fut-float,html.static .fut-shine{animation:none}html.static .fut-shine{display:none}html.static .fut-tilt{transition:none}
+@media (prefers-reduced-motion:reduce){.fut-float,.fut-shine{animation:none}.fut-shine{display:none}.fut-tilt{transition:none}}

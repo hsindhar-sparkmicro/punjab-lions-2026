@@ -136,50 +136,80 @@ const rest=D.season.filter(p=>!KEY.includes(p.name)&&p.mat>0).sort((a,b)=>b.mat-
 const tiles=$('#tiles');
 rest.forEach((p,i)=>{const c=el('button','ptile pop');c.type='button';c.dataset.open='player:'+p.name;c.setAttribute('aria-haspopup','dialog');c.style.transitionDelay=(i%6*60)+'ms';
   c.innerHTML=`<div class="tface">${photo(p.name)}</div><b>${esc(disp(p.name))}</b><span>${esc((D.players[p.name]||{}).role||'')}</span>`;tiles.appendChild(c)});
-/* hero squad orbit: every player gets a card that circles the crest (desktop), a looping row passing under it (phones),
-   a static ring / scrollable row with prefers-reduced-motion or ?static=1. Clicking a card opens the existing player modal. */
+/* hero faces */
+const faces=$('#faces');[...KEY,...rest.map(p=>p.name)].filter(n=>P.players[n]).slice(0,14).forEach(n=>{const b=el('button','hface');b.type='button';b.dataset.open='player:'+n;b.title=disp(n);b.setAttribute('aria-label',disp(n)+': open stats');b.innerHTML=`<img src="${P.players[n]}" alt="">`;faces.appendChild(b)});
+{const a=el('a','hface more-f','<span>Meet the<br>squad</span>');a.href='#squad';faces.appendChild(a)}
+/* ---------- HERO: one floating FUT-style card (random player, new one every 7 s) ---------- */
 (function(){
- const stage=$('#orbit'),track=$('#orbitTrack');if(!stage||!track)return;
- const PH=new Set(['Mohamad Vahora','Lakhwinder Singh','Jashan Lubana','Abu Taher Arafat','Sarvpreet Guru']); // poor / missing CricClubs photos
- const names=[...KEY,...rest.map(p=>p.name)].filter((n,i,a)=>a.indexOf(n)===i);
+ const host=$('.hero-inner'),crest=$('.hero-crest>img');if(!host||!crest)return;
+ const PH=new Set(['Mohamad Vahora','Lakhwinder Singh','Jashan Lubana','Abu Taher Arafat','Sarvpreet Guru']); // poor / missing CricClubs photos -> crest + initials art
+ const POS={'All Rounder':'AR','Batter':'BAT','Bowler':'BWL','Wicket Keeper':'WK'};
+ const pool=D.season.filter(p=>p.mat>0).map(p=>p.name);
+ const slug=n=>disp(n).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+ const cl=(v,a,b)=>Math.max(a,Math.min(b,v)),f1=v=>(Math.round(v*10)/10).toFixed(1);
+ /* Rating (60-95), deterministic, from the player's real 2026 season totals in data.js only:
+      bat   = 0.7*min(1, runs/700) + 0.3*min(1, SR/150)        (SR counts only with 20+ balls faced)
+      bowl  = 0.75*min(1, wickets/40) + 0.25*clamp((8-econ)/4, 0, 1)   (econ counts only with 60+ balls bowled)
+      field = min(1, fielding dismissals/30)                    (catches + keeper catches + run outs + stumpings)
+      games = min(1, matches/30)
+      impact = max(bat,bowl) + 0.35*min(bat,bowl) + 0.15*field + 0.10*games
+      rating = round(60 + 35*min(1, impact/1.4))                -> 60 (no contribution) ... 95 (squad-leading all-round season) */
+ function rating(p){const bat=.7*Math.min(1,p.runs/700)+(p.balls>=20&&p.sr?.3*Math.min(1,p.sr/150):0);
+   const bowl=.75*Math.min(1,p.wk/40)+(p.bb>=60&&p.econ!=null?.25*cl((8-p.econ)/4,0,1):0);
+   const imp=Math.max(bat,bowl)+.35*Math.min(bat,bowl)+.15*Math.min(1,p.dis/30)+.1*Math.min(1,p.mat/30);
+   return Math.round(60+35*Math.min(1,imp/1.4))}
+ /* 4-6 attributes, only numbers that exist for him; bowlers lead with bowling */
+ function attrs(p){const bat=[['RUNS',p.runs]];if(p.balls>=20&&p.sr!=null)bat.push(['SR',f1(p.sr)]);if(p.ins>=3&&p.avg!=null)bat.push(['AVG',f1(p.avg)]);if(p.ins>0)bat.push(['HS',p.hs]);
+   const bowl=[['WKTS',p.wk]];if(p.bb>=30&&p.econ!=null)bowl.push(['ECON',p.econ.toFixed(2)]);
+   const lead=p.wk>=10&&p.wk*20>=p.runs,bowled=p.bb>0,L=lead?bowl:bat,O=lead?bat:bowled?bowl:[];
+   const a=[...L.slice(0,3),...O.slice(0,2),['FLD',p.dis],...L.slice(3),...O.slice(2),['MAT',p.mat]];
+   if(a.length<4&&!a.some(x=>x[0]==='WKTS'))a.splice(a.length-1,0,['WKTS',p.wk]); // never bowled: 0 wickets shown only to reach 4 lines
+   return a.slice(0,6)}
  const cname=n=>{const w=disp(n).split(' ');return w.length>2?w[0]+' '+w.slice(1,-1).map(x=>x[0]+'.').join(' ')+' '+w[w.length-1]:w.join(' ')};
- const face=n=>(!PH.has(n)&&P.players[n])?`<img src="${P.players[n]}" alt="${esc(disp(n))}, CricClubs profile photo" decoding="async">`:
-   `<span class="ph-face oc-ph" role="img" aria-label="Punjab Lions crest placeholder for ${esc(disp(n))}"><img src="img/crest-128.png" alt=""><b>${ini(n)}</b></span>`;
- const mk=(n,dup)=>{const role=(D.players[n]||{}).role||'';const c=el('button','ocard');c.type='button';c.dataset.open='player:'+n;c.setAttribute('aria-haspopup','dialog');
-   c.setAttribute('aria-label',disp(n)+(role?', '+role:'')+': open 2026 stats');if(dup){c.tabIndex=-1;c.setAttribute('aria-hidden','true')}
-   c.innerHTML=`<span class="oc-in"><span class="oc-face">${face(n)}</span><b class="oc-name">${esc(cname(n))}</b>${role?`<span class="oc-role">${esc(role)}</span>`:''}</span>`;return c};
- const still=STATIC||RM, wide=matchMedia('(min-width:1200px)');
- let cards=[],mode='',raf=0,ang=0,clk=0,spd=0,hold=false,vis=true,last=0,geo=null,zs=[];
- function build(){cancelAnimationFrame(raf);raf=0;track.innerHTML='';mode=wide.matches?'ring':'row';stage.className='orbit '+mode+(still?' still':'');
-   if(mode==='ring'){cards=names.map(n=>mk(n));cards.forEach(c=>track.appendChild(c));zs=cards.map(()=>-1);measure();frame(clk);if(!still)loop()}
-   else{cards=[];const row=el('div','oc-row');names.forEach(n=>row.appendChild(mk(n)));if(!still)names.forEach(n=>row.appendChild(mk(n,true)));track.appendChild(row)}}
- function measure(){const W=stage.clientWidth,H=stage.clientHeight,sr=stage.getBoundingClientRect();
-   // never let the ring reach the headline column: find the right-most edge of the hero copy's text and buttons
-   let edge=0;const w=document.createTreeWalker($('.hero-copy'),NodeFilter.SHOW_TEXT),rg=document.createRange();let tn;
-   while(tn=w.nextNode()){rg.selectNodeContents(tn);for(const r of rg.getClientRects())edge=Math.max(edge,r.right)}
-   document.querySelectorAll('.hero-copy .btn').forEach(b=>edge=Math.max(edge,b.getBoundingClientRect().right));
-   const rx=Math.max(150,Math.min(290,W*.65,sr.left+W/2-edge-52));geo={cx:W/2,cy:H*.6,rx,ry:rx*.36}}
- function frame(t){const g=geo,N=cards.length;for(let i=0;i<N;i++){const a=ang+i*2*Math.PI/N,s=Math.sin(a),d=(s+1)/2; // d: 0 = back (behind crest), 1 = front
-     const bob=still?0:Math.sin(t/900+i*1.7)*5,x=g.cx+Math.cos(a)*g.rx,y=g.cy+s*g.ry+bob,sc=.52+.48*d;
-     const c=cards[i];c.style.transform=`translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) translate(-50%,-50%) perspective(700px) rotateY(${(Math.cos(a)*-48).toFixed(1)}deg) scale(${sc.toFixed(3)})`;c.style.opacity=(s<0?.22+.6*d:.5+.5*d).toFixed(2);
-     const z=s<-.05?1+Math.round(d*8):12+Math.round(d*20);if(z!==zs[i]){zs[i]=z;c.style.zIndex=z}}}
- function loop(){last=performance.now();const step=t=>{const dt=Math.min(50,t-last);last=t;const target=hold?0:1;spd+=(target-spd)*(hold?1:Math.min(1,dt/600));
-     ang+=spd*dt*2*Math.PI/90000;clk+=spd*dt; // one lap every ~90 s; the bob clock stops with the ring
-     frame(clk);raf=vis?requestAnimationFrame(step):0};raf=requestAnimationFrame(step)}
- const wake=()=>{if(mode==='ring'&&!still&&!raf&&vis&&!document.hidden)loop()};
- track.addEventListener('pointerover',e=>{if(e.target.closest('.ocard'))hold=true});
- track.addEventListener('pointerout',e=>{if(!e.relatedTarget||!e.relatedTarget.closest||!e.relatedTarget.closest('.ocard'))hold=track.contains(document.activeElement)&&document.activeElement.matches(':focus-visible')});
- track.addEventListener('focusin',e=>{if(e.target.matches(':focus-visible')){hold=true;stage.classList.add('hold')}}); // a focused card never slides away from the keyboard user
- track.addEventListener('focusout',()=>{hold=false;stage.classList.remove('hold')});
- // phones: pause the row while a finger is on it, resume shortly after
- let tt=0;track.addEventListener('touchstart',()=>{clearTimeout(tt);stage.classList.add('hold')},{passive:true});
- track.addEventListener('touchend',()=>{clearTimeout(tt);tt=setTimeout(()=>{if(!track.contains(document.activeElement))stage.classList.remove('hold')},2500)},{passive:true});
- new IntersectionObserver(es=>{vis=es[0].isIntersecting;stage.classList.toggle('off',!vis);if(vis)wake();else{cancelAnimationFrame(raf);raf=0}}).observe(stage);
- document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(raf);raf=0}else wake()});
- if(window.ResizeObserver)new ResizeObserver(()=>{if(mode==='ring'){measure();frame(clk)}}).observe(stage);
- if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(mode==='ring'){measure();frame(clk)}});
- (wide.addEventListener?wide.addEventListener('change',build):wide.addListener(build));
- build();
+ const art=n=>(!PH.has(n)&&P.players[n])?`<img class="fut-photo" src="${P.players[n]}" alt="" decoding="async">`:`<span class="fut-photo fut-ph" aria-hidden="true"><img src="img/crest-128.png" alt=""><b>${ini(n)}</b></span>`;
+ const btn=el('button','fut');btn.type='button';btn.setAttribute('aria-haspopup','dialog');
+ btn.innerHTML='<span class="fut-float"><span class="fut-tilt"><span class="fut-card"></span></span></span>';host.appendChild(btn);
+ const card=btn.querySelector('.fut-card'),tilt=btn.querySelector('.fut-tilt');
+ // preload portraits so a swap never shows a half-loaded image
+ pool.forEach(n=>{if(!PH.has(n)&&P.players[n]){const i=new Image();i.src=P.players[n]}});
+ function fill(n){const p=S(n),r=rating(p),role=(D.players[n]||{}).role||'',pos=POS[role]||'';
+   btn.dataset.open='player:'+n;btn.dataset.fut=slug(n);
+   btn.setAttribute('aria-label',`Featured Lion: ${disp(n)}, rating ${r}${role?', '+role:''}. Open 2026 stats`);
+   card.innerHTML=`<span class="fut-top"><span class="fut-ovr">${r}</span>${pos?`<span class="fut-pos">${pos}</span>`:''}<img class="fut-club" src="img/crest-128.png" alt=""></span>
+     <span class="fut-art">${art(n)}</span><span class="fut-name">${esc(cname(n))}</span>
+     <span class="fut-attrs">${attrs(p).map(([k,v])=>`<span><b>${v}</b><i>${k}</i></span>`).join('')}</span><span class="fut-shine"></span>`}
+ /* placement: off the crest's lower-right shoulder (desktop) / beside the crest (phones); layout offsets only, so
+    the crest's float and the reveal transforms never move it */
+ function place(){let x=0,y=0,e=crest;while(e&&e!==host){x+=e.offsetLeft;y+=e.offsetTop;e=e.offsetParent}
+   const cw=crest.offsetWidth,mob=innerWidth<760,hr=host.getBoundingClientRect(),maxR=hr.width+(innerWidth-hr.right)-10;let w,l,t;
+   if(mob){l=x+cw*.9;w=cl(maxR-l,84,100);t=y+cw*.2;l=Math.min(l,maxR-w)}
+   else{l=x+cw*.84;w=cl(maxR-l,120,190);t=y+cw*.66;
+     if(l+w>maxR){l=maxR-w;t=y+cw*.8}} // narrow desktops/tablets: no room beside the shield, so tuck it lower, under the crest's tip
+   {const fc=$('#faces'),lc=fc&&fc.lastElementChild;if(lc&&l<fc.offsetLeft+lc.offsetLeft+lc.offsetWidth&&fc.offsetParent===host)t=Math.min(t,fc.offsetTop-w*262/184-6)} // never sit on the face circles
+   btn.classList.toggle('compact',mob);btn.style.cssText=`left:${l.toFixed(1)}px;top:${t.toFixed(1)}px;width:${w.toFixed(1)}px;font-size:${(w/184*16).toFixed(2)}px`}
+ const q=new URLSearchParams(location.search).get('fut'),want=q&&pool.find(n=>slug(n)===slug(q)||n===q);
+ /* own random source, so the rest of the page's Math.random sequence is untouched */
+ const rndI=n=>{try{return crypto.getRandomValues(new Uint32Array(1))[0]%n}catch(e){return Math.floor(Math.random()*n)}};
+ let cur=want||pool[rndI(pool.length)],hist=[cur],el7=0,hover=false,focus=false,vis=true,busy=false;
+ const pick=()=>{let n;do{n=pool[rndI(pool.length)]}while(n===cur&&pool.length>1);return n};
+ const still=STATIC||RM;
+ async function swap(){if(busy)return;busy=true;const n=pick();
+   if(still||!tilt.animate){fill(n)}else{
+     await tilt.animate([{transform:'rotateY(0deg)'},{transform:'rotateY(90deg)'}],{duration:260,easing:'ease-in'}).finished;fill(n);
+     await tilt.animate([{transform:'rotateY(-90deg)'},{transform:'rotateY(0deg)'}],{duration:320,easing:'ease-out'}).finished}
+   cur=n;hist.push(n);busy=false}
+ fill(cur);place();
+ addEventListener('resize',place);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(place);
+ btn.addEventListener('pointerenter',()=>hover=true);btn.addEventListener('pointerleave',()=>{hover=false;tilt.style.removeProperty('--rx');tilt.style.removeProperty('--ry')});
+ btn.addEventListener('focusin',()=>focus=true);btn.addEventListener('focusout',()=>focus=false);
+ if(!still)btn.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;const r=btn.getBoundingClientRect(),dx=(e.clientX-r.left)/r.width-.5,dy=(e.clientY-r.top)/r.height-.5;
+   tilt.style.setProperty('--ry',(dx*16).toFixed(1)+'deg');tilt.style.setProperty('--rx',(-dy*12).toFixed(1)+'deg')});
+ new IntersectionObserver(es=>{vis=es[0].isIntersecting}).observe($('#top'));
+ const modalEl=$('#modal');let lastT=performance.now();
+ setInterval(()=>{const t=performance.now(),dt=t-lastT;lastT=t;
+   const paused=hover||focus||!vis||document.hidden||!modalEl.hidden;btn.classList.toggle('paused',paused);
+   if(paused||busy)return;el7+=dt;if(el7>=7000){el7=0;swap()}},100);
+ window.__fut={get name(){return cur},get history(){return hist.slice()},get elapsed(){return el7},rating:n=>rating(S(n)),attrs:n=>attrs(S(n)),pool};
 })();
 /* highlight reel: poster cards; video attached lazily (IntersectionObserver, preload=none); hover or click/tap plays */
 {const R=$('#reelGrid');
