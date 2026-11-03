@@ -24,6 +24,15 @@ const P=D.photos||{players:{},beyond:{},flags:{}};
 const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 const ini=n=>n.replace(/^XX /,'').split(' ').filter((w,j,a)=>j===0||j===a.length-1).map(w=>w[0]).join('');
 const disp=n=>n.replace(/^XX /,'');
+/* ---------- 2027 goal markers (data2027.js <- scripts/update_2027.py): fill = 50% at the 2026 baseline, 100% at the 2027 target ---------- */
+const Y27=window.PL_2027||{played:0,team:[],players:{},matches:[]};
+const gfmt=(m,v)=>{if(v==null)return '–';if(m.pct)return Math.round(100*v)+'%';const dp=m.count||m.raw||m.metric==='runs'||m.metric==='wkts'||m.metric==='wides'||m.metric==='fifties'?0:(m.dp!=null?m.dp:(Math.abs(v)>=20?1:2));return (+v).toFixed(dp)};
+const gauge=(m,cls)=>{const p=100*m.progress,b=100*m.baseProgress,d=m.delta,tgt=m.text||`${m.lower?'≤ ':''}${Number.isInteger(+m.target)&&!m.pct?(+m.target):gfmt(m,m.target)}${m.lower?'':'+'}`;
+  const chip=d?`<span class="gdel ${d.toward===true?'to':d.toward===false?'away':'eq'}" title="${d.toward===true?'Moved toward the target':d.toward===false?'Moved away from the target':'No change'} after the match v ${esc(d.vs)}">${esc(m.short||m.label.split(' (')[0])} ${d.dir} <em>after v ${esc(d.vs)}</em></span>`:'';
+  const now=m.started?`<span class="gnow">2027 <b>${gfmt(m,m.value)}</b>${m.count?' <i>pace</i>':''}<small>${esc(m.detail||'')}</small></span>`:`<span class="gnow g0">${Y27.played?esc(m.detail||'not yet'):'Season starts 2027 · 0 matches played'}</span>`;
+  return `<div class="gm ${cls||''}${m.started?'':' idle'}"><div class="gtop"><span class="glab">${esc(m.label)}${m.unit?`<i>${esc(m.unit)}</i>`:''}</span>${chip}</div>
+   <div class="gbar" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.toFixed(0)}" aria-label="${esc(m.label)}: ${p.toFixed(0)}% of the way from the 2026 level to the 2027 target"><i class="gfill" style="--w:${p.toFixed(1)}%"></i><i class="gbase" style="--l:${b.toFixed(1)}%" title="2026 level"></i><span class="gflag" aria-hidden="true">⚑</span></div>
+   <div class="gvals"><span>2026 <b>${esc(m.baseText||gfmt(m,m.base))}</b></span>${now}<span class="gtg">Target <b>${esc(tgt)}</b></span></div></div>`};
 const photo=(n,cls)=>P.players[n]?`<img class="${cls||''}" src="${P.players[n]}" alt="${esc(disp(n))}, ${esc((P.credit||{})[n]||'CricClubs profile photo')}" loading="lazy">`:
   `<div class="ph-face ${cls||''}" role="img" aria-label="No photo yet for ${esc(disp(n))}"><img src="img/crest-128.png" alt=""><b>${ini(n)}</b><span>Punjab Lions</span></div>`;
 const modal=$('#modal'),mbox=modal.querySelector('.mbox'),mbody=$('#mdBody');let opener=null;const builders={};
@@ -41,7 +50,8 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-open]');if
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const VIDS=P.videos||[],V=id=>VIDS.find(v=>v.id===id);
 const mkVideo=(v,cls)=>{const e=document.createElement('video');e.className=cls;e.muted=true;e.defaultMuted=true;e.loop=true;e.playsInline=true;e.setAttribute('muted','');e.setAttribute('playsinline','');e.preload='none';e.poster=v.poster;
-  e.innerHTML=`<source src="${v.webm}" type="video/webm"><source src="${v.mp4}" type="video/mp4">`;return e};
+  /* H.264 MP4 first: iOS Safari cannot play the VP9 WebM, and every browser takes the first source it supports */
+  e.innerHTML=`<source src="${v.mp4}" type="video/mp4">${v.webm?`<source src="${v.webm}" type="video/webm">`:''}`;return e};
 const playIO=new IntersectionObserver(es=>es.forEach(en=>{const vd=en.target;if(en.isIntersecting){vd.play().catch(()=>{})}else vd.pause()}),{threshold:.05});
 document.querySelectorAll('.scene.vid').forEach(sc=>{const v=V(sc.dataset.clip);if(!v){sc.className='scene ph';return}
   sc.style.backgroundImage=`url(${v.poster})`;
@@ -268,6 +278,11 @@ const FUT=(()=>{
 /* photo note */
 {const all=D.season.map(p=>p.name),real=all.filter(n=>P.players[n]),ph=all.filter(n=>!P.players[n]);
  $('#photoNote').innerHTML=`Player photos: CricClubs profile pictures; the crest stands in where there is none. &ldquo;Matches&rdquo; is the sum of CricClubs Mat columns and may include abandoned games.`}
+/* Road to 2027 block per player: strengths / work-ons from the 2026 scorecards, plus personal markers (data/targets_2027.json -> data2027.js) */
+const road27=n=>{const R=(Y27.players||{})[n];if(!R)return '';
+  const li=a=>a.length?`<ul>${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'<p class="fnone">Not enough 2026 data to name one yet.</p>';
+  return `<h4 class="fsec">Road to 2027</h4><div class="r27"><div class="r27c s"><h5>Strengths</h5>${li(R.strengths)}</div><div class="r27c w"><h5>Work on</h5>${li(R.workons)}</div>
+   <div class="r27c t"><h5>2027 target${R.targets.length>1?'s':''}</h5><div class="gms">${R.targets.map(m=>gauge(m,'mine')).join('')}</div></div></div>`};
 /* player modal: batting / bowling / fielding per competition */
 const CL=k=>D.comps.find(c=>c.key===k).label;
 /* player detail window = a FUT-style card (same rating() / attrs() as the hero card) + the full 2026 stats, FUT-style */
@@ -298,6 +313,7 @@ builders.player=n=>{const pc=(D.pcomp||{})[n]||{},m=D.players[n]||{},ks=D.comps.
     <div class="mdbtns">${m.url?`<a class="btn ghost sm" href="${m.url}" target="_blank" rel="noopener">CricClubs profile ↗</a>`:''}${watch.map(x=>`<a class="btn gold sm watch" href="#reel" data-play="${x.id}">${esc(x.label||'Watch the clip')} ▶</a>`).join('')}</div>
     ${by.length?`<div class="mdbeyond">${by.map(x=>`<a href="${x.url}"${x.ext?' target="_blank" rel="noopener"':''}><img src="${x.img}" alt="${esc(x.caption)}"><span>${esc(x.caption.split(' - ')[0])}<em>${x.meta}</em></span></a>`).join('')}</div>`:''}</div></div>
    ${p?`<h4 class="fsec">2026 season</h4><div class="fpanels">${panels}</div>`:''}
+   ${road27(n)}
    ${dlist}${ks.length?`<h4 class="fsec">By competition</h4>${bat}${bowl}${fld}`:'<p class="note">No 2026 records in the CricClubs tables.</p>'}
    <p class="fine">Source: CricClubs 2026 batting, bowling and fielding tables per competition. Lions rating: the same formula as the hero card (season runs, strike rate, wickets, economy, fielding, matches). Fielding counts catches and run-outs (keeper catches and stumpings at half), per match, and big-game dismissals: those in the 5 knockouts and 6 close games, from the scorecards.</p>`};
 
@@ -372,10 +388,9 @@ const RG=D.recog||{};
  /* six goals */
  strip('#rGoals',(RG.goals||[]).map((g,i)=>`<article class="goal pop" style="transition-delay:${i%3*110}ms"><span class="gn">${String(g.n).padStart(2,'0')}</span><h4>${esc(g.area)}</h4>
    <dl><dt>2026</dt><dd>${esc(g.base)}</dd><dt>Practice</dt><dd>${esc(g.practice)}</dd><dt class="t">2027 target</dt><dd class="t">${esc(g.target)}</dd></dl></article>`).join(''));
- /* goal tracker: bar from 2026 baseline to the 2027 flag; scale fits both */
- strip('#rTrack27',(RG.goals||[]).map(g=>{const t=g.track;if(!t)return '';const mx=Math.max(t.base,t.goal)*1.25,bp=100*t.base/mx,gp=100*t.goal/mx,dp=Number.isInteger(t.base)?0:2;
-   return `<div class="tk"><span class="tl"><b>${String(g.n).padStart(2,'0')}</b>${esc(t.label)}</span><span class="tb"><i class="tfill" style="--w:${bp.toFixed(1)}%"></i><i class="tgap" style="--l:${Math.min(bp,gp).toFixed(1)}%;--w:${Math.abs(gp-bp).toFixed(1)}%"></i>
-     <span class="tflag" style="--l:${gp.toFixed(1)}%" aria-hidden="true">⚑</span></span><span class="tv"><span>2026 <b>${esc(t.baseText||t.base.toFixed(dp))}</b></span><span class="tg">2027 ${t.goalText?esc(t.goalText):`${t.lower?'≤':''}<b>${t.goal.toFixed(dp)}</b>${t.lower?'':'+'}`}</span><span class="t0">0 matches logged</span></span></div>`}).join(''));
+ /* 2027 goal markers: team goals, recomputed after every 2027 match by scripts/update_2027.py */
+ strip('#rTrack27',`<p class="gstate">${Y27.played?`<b>${Y27.played}</b> match${Y27.played>1?'es':''} played in 2027 · last: v ${esc(Y27.matches[Y27.matches.length-1].opp)}`:'<b>Season starts 2027</b> · 0 matches played. Every marker sits at its 2026 level until the first scorecard is in.'}</p><div class="gms">${(Y27.team||[]).map(m=>gauge(m,'team')).join('')}</div>
+   <p class="legend2"><i class="gk base"></i>2026 level <i class="gk fill"></i>2027 so far <span>Full bar = 2027 target. A marker fills when a match moves it toward the target and drops back when it moves away. Counts (fifties, all-outs, ducks) are paced to a 31-match season.</span></p>`);
  /* personal challenge cards */
  strip('#rChall',(RG.challenges||[]).map((c,i)=>`<button type="button" class="ch pop" style="transition-delay:${i%3*100}ms" data-open="player:${esc(c.player)}" aria-haspopup="dialog"><span class="chimg">${photo(c.player)}</span><span class="chb"><i>2027 challenge</i><b>${esc(disp(c.player))}</b><strong>${esc(c.goal)}</strong><span>${esc(c.base)}</span></span></button>`).join(''));
  strip('#rSrc','Sources: CricClubs QCF 2026 scorecards, ball-by-ball and season tables. Phase numbers use the T20 over summaries only; momentum compares May&ndash;Jul with Aug&ndash;Oct. No ages are recorded, so &ldquo;Rising Lions&rdquo; means rising form, not age.');
